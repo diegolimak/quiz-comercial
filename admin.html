@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin | Quiz AMV</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+  :root {
+    --navy:     #1E3A5F; --blue:  #1B7DC4; --light: #7EC8E3;
+    --pale:     #EAF5FB; --white: #FFFFFF; --off-white: #F5F4F0;
+    --body:     #3A4A5C; --muted: #7A8999; --border: rgba(30,58,95,.10);
+    --green:    #16a34a; --green-bg: #dcfce7;
+    --red:      #dc2626; --red-bg:   #fee2e2;
+    --yellow:   #f59e0b;
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family:'Inter',sans-serif; background:var(--off-white); color:var(--body); min-height:100vh; -webkit-font-smoothing:antialiased; }
+
+  /* ── BACKGROUND ── */
+  .bg-hearts {
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.02;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 60C40 60 10 40 10 22 10 14 16 8 24 8 30 8 36 12 40 18 44 12 50 8 56 8 64 8 70 14 70 22 70 40 40 60Z' fill='%231E3A5F'/%3E%3C/svg%3E");
+    background-size:80px 80px;
+  }
+
+  /* ── LOGIN ── */
+  .login-wrap {
+    position:relative; z-index:1; min-height:100vh;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .login-card {
+    background:var(--white); border-radius:24px; padding:52px 44px; text-align:center;
+    box-shadow:0 8px 48px rgba(30,58,95,.10); max-width:420px; width:100%;
+  }
+  .login-card .card-stripe { height:5px; background:linear-gradient(90deg,var(--navy),var(--blue),var(--light)); border-radius:5px 5px 0 0; margin:-52px -44px 40px; }
+  .login-icon { font-size:52px; display:block; margin-bottom:16px; }
+  .login-title { font-family:'Montserrat',sans-serif; font-size:26px; font-weight:900; color:var(--navy); margin-bottom:8px; }
+  .login-sub   { font-size:14px; color:var(--muted); margin-bottom:32px; line-height:1.6; }
+  .pw-label  { display:block; text-align:left; font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--navy); margin-bottom:8px; }
+  .pw-input  { width:100%; padding:16px 20px; border:2.5px solid rgba(30,58,95,.15); border-radius:14px; font-family:'Sora',sans-serif; font-size:17px; font-weight:600; color:var(--navy); background:var(--pale); outline:none; text-align:center; transition:border-color .2s,box-shadow .2s; margin-bottom:20px; }
+  .pw-input:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(27,125,196,.12); background:#fff; }
+  .pw-error  { color:var(--red); font-size:13px; font-weight:600; margin-bottom:16px; display:none; }
+  .pw-error.show { display:block; }
+  .btn-login { width:100%; background:linear-gradient(135deg,var(--navy),var(--blue)); color:#fff; border:none; border-radius:50px; padding:17px; font-family:'Montserrat',sans-serif; font-size:15px; font-weight:800; cursor:pointer; transition:all .2s; box-shadow:0 6px 24px rgba(27,125,196,.28); }
+  .btn-login:hover { transform:translateY(-2px); box-shadow:0 12px 36px rgba(27,125,196,.38); }
+  .back-link { display:block; margin-top:20px; font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+  .back-link:hover { color:var(--navy); }
+
+  /* ── DASHBOARD ── */
+  .dash { position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:32px 20px 80px; display:none; }
+  .dash.visible { display:block; animation:fadeIn .4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  /* Header */
+  .dash-header { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:36px; }
+  .dash-brand  { display:flex; align-items:center; gap:10px; }
+  .dash-brand-text { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--navy); opacity:.6; }
+  .dash-title  { font-family:'Montserrat',sans-serif; font-size:26px; font-weight:900; color:var(--navy); }
+  .dash-actions { display:flex; gap:10px; flex-wrap:wrap; }
+  .btn-export  { background:linear-gradient(135deg,var(--green),#22c55e); color:#fff; border:none; border-radius:50px; padding:12px 24px; font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; box-shadow:0 4px 16px rgba(34,197,94,.28); }
+  .btn-export:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(34,197,94,.38); }
+  .btn-refresh { background:transparent; color:var(--navy); border:2px solid var(--border); border-radius:50px; padding:11px 22px; font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; }
+  .btn-refresh:hover { border-color:var(--blue); color:var(--blue); }
+  .btn-logout  { background:transparent; color:var(--muted); border:2px solid var(--border); border-radius:50px; padding:11px 22px; font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; cursor:pointer; transition:all .2s; }
+  .btn-logout:hover { border-color:var(--red); color:var(--red); }
+
+  /* KPI Cards */
+  .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:32px; }
+  .kpi { background:var(--white); border-radius:20px; padding:24px 20px; box-shadow:0 4px 20px rgba(30,58,95,.07); border-top:4px solid transparent; }
+  .kpi.k-total   { border-top-color:var(--blue); }
+  .kpi.k-pass    { border-top-color:var(--green); }
+  .kpi.k-avg     { border-top-color:var(--yellow); }
+  .kpi.k-fast    { border-top-color:var(--light); }
+  .kpi-val  { font-family:'Montserrat',sans-serif; font-size:38px; font-weight:900; color:var(--navy); line-height:1; margin-bottom:4px; }
+  .kpi-lbl  { font-size:12px; color:var(--muted); font-weight:500; }
+
+  /* Filtros */
+  .filter-row { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:center; }
+  .filter-label { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); }
+  .filter-select { padding:9px 16px; border:2px solid var(--border); border-radius:50px; font-family:'Inter',sans-serif; font-size:13px; font-weight:600; color:var(--navy); background:var(--white); outline:none; cursor:pointer; transition:border-color .2s; }
+  .filter-select:focus { border-color:var(--blue); }
+  .search-input { flex:1; max-width:280px; padding:9px 18px; border:2px solid var(--border); border-radius:50px; font-family:'Inter',sans-serif; font-size:13px; color:var(--navy); background:var(--white); outline:none; transition:border-color .2s; }
+  .search-input:focus { border-color:var(--blue); }
+
+  /* Tabela */
+  .table-card { background:var(--white); border-radius:22px; box-shadow:0 4px 24px rgba(30,58,95,.07); overflow:hidden; margin-bottom:28px; }
+  .table-header-bar { background:var(--navy); padding:14px 24px; display:grid; grid-template-columns:36px 1fr 90px 90px 72px 82px 100px; gap:8px; align-items:center; }
+  .th { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); cursor:pointer; user-select:none; display:flex; align-items:center; gap:4px; transition:color .2s; }
+  .th:hover { color:rgba(255,255,255,.85); }
+  .th.sorted { color:#fff; }
+  .sort-arrow { font-size:10px; }
+  .trow { display:grid; grid-template-columns:36px 1fr 90px 90px 72px 82px 100px; gap:8px; align-items:center; padding:14px 24px; border-bottom:1px solid var(--border); transition:background .15s; }
+  .trow:last-child { border-bottom:none; }
+  .trow:hover { background:var(--pale); }
+  .trow.approved { border-left:3px solid var(--green); }
+  .trow.failed   { border-left:3px solid rgba(30,58,95,.15); }
+  .td-pos  { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:800; color:var(--muted); text-align:center; }
+  .td-pos.medal { font-size:16px; }
+  .td-name { font-family:'Sora',sans-serif; font-size:14px; font-weight:600; color:var(--navy); }
+  .td-date { font-size:11px; color:var(--muted); }
+  .td-score { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:800; }
+  .sc-g { color:var(--green); } .sc-y { color:var(--yellow); } .sc-r { color:var(--red); }
+  .td-pct   { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:800; color:var(--blue); }
+  .td-time  { font-size:12px; color:var(--muted); }
+  .td-status { text-align:center; }
+  .badge-ok  { display:inline-block; background:var(--green-bg); color:var(--green); font-family:'Montserrat',sans-serif; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.06em; }
+  .badge-fail { display:inline-block; background:var(--red-bg); color:var(--red); font-family:'Montserrat',sans-serif; font-size:10px; font-weight:800; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.06em; }
+
+  /* Spinner / vazio */
+  .spin-wrap { display:flex; flex-direction:column; align-items:center; padding:60px 20px; }
+  .spinner { width:44px; height:44px; border-radius:50%; border:4px solid var(--pale); border-top-color:var(--blue); animation:spin .8s linear infinite; margin-bottom:14px; }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .spin-label { font-size:15px; color:var(--muted); }
+  .empty-state { text-align:center; padding:48px 24px; color:var(--muted); font-size:15px; line-height:1.7; }
+  .empty-icon  { font-size:44px; display:block; margin-bottom:12px; }
+
+  /* Paginação */
+  .pagination { display:flex; align-items:center; justify-content:center; gap:8px; margin-top:20px; flex-wrap:wrap; }
+  .page-info { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:600; color:var(--muted); }
+  .btn-page { background:var(--white); border:2px solid var(--border); border-radius:50px; padding:9px 20px; font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; color:var(--navy); cursor:pointer; transition:all .2s; }
+  .btn-page:hover { border-color:var(--blue); color:var(--blue); }
+  .btn-page:disabled { opacity:.35; cursor:default; }
+
+  /* Toast */
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(100px); background:var(--navy); color:#fff; font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700; padding:13px 26px; border-radius:50px; box-shadow:0 8px 28px rgba(30,58,95,.3); transition:transform .35s cubic-bezier(.34,1.56,.64,1); z-index:1000; white-space:nowrap; pointer-events:none; }
+  .toast.up { transform:translateX(-50%) translateY(0); }
+
+  /* Responsive */
+  @media(max-width:768px) {
+    .table-header-bar, .trow { grid-template-columns:30px 1fr 70px 60px 64px; }
+    .table-header-bar .th:nth-child(6), .table-header-bar .th:nth-child(7),
+    .trow .td-date, .trow .td-status { display:none; }
+    .login-card { padding:40px 24px; }
+    .login-card .card-stripe { margin:-40px -24px 32px; }
+  }
+  </style>
+</head>
+<body>
+
+<div class="bg-hearts"></div>
+<div class="toast" id="toast"></div>
+
+<!-- ══ TELA DE LOGIN ══ -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-card">
+    <div class="card-stripe"></div>
+    <span class="login-icon">🔐</span>
+    <h1 class="login-title">Painel Admin</h1>
+    <p class="login-sub">Acesso restrito à gerência.<br>Informe a senha para visualizar os resultados.</p>
+    <label class="pw-label" for="pwInput">Senha de acesso</label>
+    <input type="password" id="pwInput" class="pw-input"
+      placeholder="••••••••" onkeydown="if(event.key==='Enter') doLogin()"/>
+    <div class="pw-error" id="pwError">⚠️ Senha incorreta. Tente novamente.</div>
+    <button class="btn-login" onclick="doLogin()">Entrar →</button>
+    <a href="index.html" class="back-link">← Voltar ao Quiz</a>
+  </div>
+</div>
+
+<!-- ══ DASHBOARD ══ -->
+<div class="dash" id="dashboard">
+
+  <!-- Cabeçalho -->
+  <div class="dash-header">
+    <div>
+      <div class="dash-brand">
+        <svg width="36" height="36" viewBox="0 0 44 44" fill="none">
+          <circle cx="22" cy="22" r="22" fill="#1E3A5F"/>
+          <path d="M22 33C22 33 9 23 9 15C9 11 12 8 16 8C19 8 21 10 22 12C23 10 25 8 28 8C32 8 35 11 35 15C35 23 22 33 22 33Z" fill="#7EC8E3"/>
+        </svg>
+        <span class="dash-brand-text">Corretora Amor à Vida</span>
+      </div>
+      <div class="dash-title">Painel de Resultados</div>
+    </div>
+    <div class="dash-actions">
+      <button class="btn-export"  onclick="exportCSV()">⬇ Exportar CSV</button>
+      <button class="btn-refresh" onclick="loadData()">↺ Atualizar</button>
+      <button class="btn-logout"  onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-grid">
+    <div class="kpi k-total"><div class="kpi-val" id="kTotal">—</div><div class="kpi-lbl">Total de participantes</div></div>
+    <div class="kpi k-pass"> <div class="kpi-val" id="kPass">—</div><div class="kpi-lbl">Aprovados (≥ 70%)</div></div>
+    <div class="kpi k-avg">  <div class="kpi-val" id="kAvg">—</div><div class="kpi-lbl">Nota média</div></div>
+    <div class="kpi k-fast"> <div class="kpi-val" id="kFast">—</div><div class="kpi-lbl">Melhor tempo</div></div>
+  </div>
+
+  <!-- Filtros e busca -->
+  <div class="filter-row">
+    <span class="filter-label">Filtrar:</span>
+    <select class="filter-select" id="filterStatus" onchange="applyFilters()">
+      <option value="all">Todos</option>
+      <option value="passed">Aprovados</option>
+      <option value="failed">Reprovados</option>
+    </select>
+    <select class="filter-select" id="sortBy" onchange="applyFilters()">
+      <option value="date_desc">Data ↓ (mais recentes)</option>
+      <option value="date_asc">Data ↑ (mais antigos)</option>
+      <option value="score_desc">Nota ↓ (maiores)</option>
+      <option value="score_asc">Nota ↑ (menores)</option>
+      <option value="time_asc">Tempo ↑ (mais rápidos)</option>
+      <option value="name_asc">Nome A→Z</option>
+    </select>
+    <input type="search" class="search-input" id="searchInput"
+      placeholder="🔍 Buscar por nome…" oninput="applyFilters()"/>
+  </div>
+
+  <!-- Tabela de resultados -->
+  <div class="table-card">
+    <div class="table-header-bar">
+      <div class="th">#</div>
+      <div class="th" onclick="sortByCol('name')">Nome <span class="sort-arrow" id="arr-name"></span></div>
+      <div class="th" onclick="sortByCol('score')">Acertos <span class="sort-arrow" id="arr-score"></span></div>
+      <div class="th" onclick="sortByCol('percentage')">Nota <span class="sort-arrow" id="arr-pct"></span></div>
+      <div class="th" onclick="sortByCol('time')">Tempo <span class="sort-arrow" id="arr-time"></span></div>
+      <div class="th" onclick="sortByCol('date')">Data <span class="sort-arrow" id="arr-date"></span></div>
+      <div class="th">Status</div>
+    </div>
+    <div id="tableBody">
+      <div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando dados…</div></div>
+    </div>
+  </div>
+
+  <!-- Paginação -->
+  <div class="pagination" id="pagination"></div>
+
+</div><!-- /dash -->
+
+
+<script>
+/* ───────────────────────────────────────────────────────────────────
+   CONFIGURAÇÃO GOOGLE SHEETS — deve ser a mesma URL do index.html
+   Cole aqui a URL do Apps Script implantado como Web App.
+─────────────────────────────────────────────────────────────────── */
+const SCRIPT_URL     = "https://script.google.com/macros/s/AKfycbyvcdGHis1cCUvTAY_0XqXe8Sn6Nxw9lA1eY9OjaFlmOSnVCVqaywtZkO1P4Q31Ob6e/exec";
+const SHEETS_ENABLED = SCRIPT_URL !== "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+
+/* ───────────────────────────────────────────────────────────────────
+   SENHA DO PAINEL ADMIN — altere "amv2025" para a senha desejada.
+─────────────────────────────────────────────────────────────────── */
+const ADMIN_PASSWORD = "amv2025";
+
+/* ── Estado ── */
+let allResults = [];
+let filtered   = [];
+let currentPage = 1;
+const PAGE_SIZE = 20;
+let sortCol = 'date'; let sortDir = 'desc';
+
+const $ = id => document.getElementById(id);
+const fmt = sec => `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+
+function showToast(msg, ms=3000) {
+  const t = $('toast'); t.textContent = msg; t.classList.add('up');
+  clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('up'), ms);
+}
+
+/* ══ LOGIN ══ */
+function doLogin() {
+  const pw = $('pwInput').value;
+  if (pw === ADMIN_PASSWORD) {
+    $('loginWrap').style.display = 'none';
+    $('dashboard').classList.add('visible');
+    loadData();
+    sessionStorage.setItem('amv_admin', '1');
+  } else {
+    $('pwError').classList.add('show');
+    $('pwInput').value = '';
+    $('pwInput').focus();
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('amv_admin');
+  $('dashboard').classList.remove('visible');
+  $('loginWrap').style.display = 'flex';
+  $('pwInput').value = '';
+}
+
+/* Auto-login se sessão ativa */
+if (sessionStorage.getItem('amv_admin') === '1') {
+  $('loginWrap').style.display = 'none';
+  $('dashboard').classList.add('visible');
+}
+
+/* ══ CARREGAMENTO DE DADOS ══ */
+async function loadData() {
+  $('tableBody').innerHTML = '<div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando dados…</div></div>';
+  allResults = [];
+
+  /* Google Sheets primeiro */
+  if (SHEETS_ENABLED) {
+    try {
+      const res  = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) allResults = data;
+    } catch(e) { console.warn('Sheets read error:', e); }
+  }
+
+  /* Fallback localStorage */
+  if (!allResults.length) {
+    allResults = JSON.parse(localStorage.getItem('amv_quiz_results') || '[]');
+  }
+
+  updateKPIs();
+  applyFilters();
+  showToast(`✅ ${allResults.length} resultado(s) carregado(s).`);
+}
+
+/* ══ KPIs ══ */
+function updateKPIs() {
+  const total  = allResults.length;
+  const passed = allResults.filter(r => r.percentage >= 70).length;
+  const avg    = total ? Math.round(allResults.reduce((s,r) => s + r.percentage, 0) / total) : 0;
+  const fast   = total ? allResults.reduce((best, r) => r.time < best ? r.time : best, Infinity) : null;
+
+  $('kTotal').textContent = total;
+  $('kPass').textContent  = passed;
+  $('kAvg').textContent   = total ? `${avg}%` : '—';
+  $('kFast').textContent  = fast !== null && isFinite(fast) ? fmt(fast) : '—';
+}
+
+/* ══ FILTROS E ORDENAÇÃO ══ */
+function applyFilters() {
+  const status = $('filterStatus').value;
+  const search = $('searchInput').value.toLowerCase().trim();
+  const sort   = $('sortBy').value;
+
+  filtered = allResults.filter(r => {
+    if (status === 'passed' && r.percentage < 70)  return false;
+    if (status === 'failed' && r.percentage >= 70) return false;
+    if (search && !r.name.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  const [field, dir] = sort.split('_');
+  filtered.sort((a, b) => {
+    let av = a[field === 'date' ? 'date' : field];
+    let bv = b[field === 'date' ? 'date' : field];
+    if (field === 'name') { av = av.toLowerCase(); bv = bv.toLowerCase(); }
+    if (av < bv) return dir === 'asc' ? -1 :  1;
+    if (av > bv) return dir === 'asc' ?  1 : -1;
+    return 0;
+  });
+
+  currentPage = 1;
+  renderTable();
+  renderPagination();
+}
+
+function sortByCol(col) {
+  if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+  else { sortCol = col; sortDir = 'desc'; }
+  ['name','score','pct','time','date'].forEach(c => $(`arr-${c}`).textContent = '');
+  const colMap = {name:'name', score:'score', percentage:'pct', time:'time', date:'date'};
+  if (colMap[col]) $(`arr-${colMap[col]}`).textContent = sortDir === 'asc' ? '↑' : '↓';
+  /* sincroniza o select */
+  $('sortBy').value = `${col}_${sortDir}`;
+  applyFilters();
+}
+
+/* ══ RENDERIZAR TABELA ══ */
+function renderTable() {
+  if (!filtered.length) {
+    $('tableBody').innerHTML = '<div class="empty-state"><span class="empty-icon">📋</span>Nenhum resultado encontrado para os filtros selecionados.</div>';
+    return;
+  }
+
+  const start   = (currentPage - 1) * PAGE_SIZE;
+  const page    = filtered.slice(start, start + PAGE_SIZE);
+  const medals  = {0:'🥇', 1:'🥈', 2:'🥉'};
+
+  /* Posições globais (no conjunto filtrado) */
+  const ranked = [...filtered].sort((a,b) => b.percentage !== a.percentage ? b.percentage - a.percentage : a.time - b.time);
+
+  let html = '';
+  page.forEach((r, pageIdx) => {
+    const globalIdx = start + pageIdx;
+    const rankPos   = ranked.findIndex(x => x === r);
+    const posLabel  = medals[rankPos] !== undefined ? medals[rankPos] : (rankPos + 1);
+    const scoreCls  = r.percentage >= 80 ? 'sc-g' : r.percentage >= 70 ? 'sc-y' : 'sc-r';
+    const rowCls    = r.percentage >= 70 ? 'approved' : 'failed';
+    const dateStr   = r.date ? new Date(r.date).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    html += `
+      <div class="trow ${rowCls}">
+        <div class="td-pos ${rankPos < 3 ? 'medal':''}">${posLabel}</div>
+        <div class="td-name">${escHtml(r.name)}</div>
+        <div class="td-score ${scoreCls}">${r.score}/${r.total}</div>
+        <div class="td-pct">${r.percentage}%</div>
+        <div class="td-time">${fmt(r.time || 0)}</div>
+        <div class="td-date">${dateStr}</div>
+        <div class="td-status">${r.percentage >= 70 ? '<span class="badge-ok">Aprovado</span>' : '<span class="badge-fail">Reprovado</span>'}</div>
+      </div>`;
+  });
+  $('tableBody').innerHTML = html;
+}
+
+function renderPagination() {
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  if (pages <= 1) { $('pagination').innerHTML = ''; return; }
+  $('pagination').innerHTML = `
+    <button class="btn-page" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}>← Anterior</button>
+    <span class="page-info">Página ${currentPage} de ${pages} · ${total} registros</span>
+    <button class="btn-page" onclick="goPage(${currentPage+1})" ${currentPage>=pages?'disabled':''}>Próxima →</button>`;
+}
+
+function goPage(n) {
+  const pages = Math.ceil(filtered.length / PAGE_SIZE);
+  currentPage = Math.max(1, Math.min(n, pages));
+  renderTable(); renderPagination();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ══ EXPORTAR CSV ══ */
+function exportCSV() {
+  if (!filtered.length) { showToast('⚠️ Nenhum dado para exportar.'); return; }
+  const header = ['Nome','Acertos','Total','Nota (%)','Tempo (s)','Status','Data'];
+  const rows   = filtered.map(r => [
+    `"${r.name.replace(/"/g,'""')}"`,
+    r.score, r.total, r.percentage, r.time || 0,
+    r.percentage >= 70 ? 'Aprovado' : 'Reprovado',
+    r.date ? new Date(r.date).toLocaleString('pt-BR') : ''
+  ]);
+  const csv  = [header, ...rows].map(r => r.join(';')).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `quiz_amv_resultados_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`⬇ CSV exportado com ${filtered.length} registros!`);
+}
+
+/* ── Utilitário ── */
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* Se chegou logado, carrega imediatamente */
+if (sessionStorage.getItem('amv_admin') === '1') {
+  loadData();
+}
+</script>
+</body>
+</html>

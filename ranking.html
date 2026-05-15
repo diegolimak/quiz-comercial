@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ranking | Quiz PME — Corretora Amor à Vida</title>
+  <meta name="description" content="Ranking público do Quiz de Treinamento PME — Módulo 02 Operadoras do DF">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+  :root {
+    --navy:      #1E3A5F;
+    --navy-dark: #152B47;
+    --blue:      #1B7DC4;
+    --light:     #7EC8E3;
+    --pale:      #EAF5FB;
+    --off-white: #F5F4F0;
+    --white:     #FFFFFF;
+    --body:      #3A4A5C;
+    --muted:     #7A8999;
+    --border:    rgba(30,58,95,.10);
+    --green:     #16a34a;
+    --red:       #dc2626;
+    --gold:      #F59E0B;
+    --silver:    #94A3B8;
+    --bronze:    #B45309;
+  }
+
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family:'Inter',sans-serif;
+    background:var(--off-white);
+    color:var(--body);
+    min-height:100vh;
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-layer { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+  .bg-blob {
+    position:absolute; border-radius:50%; filter:blur(110px); will-change:transform;
+  }
+  .bg-blob-1 { width:700px; height:700px; background:radial-gradient(circle,rgba(27,125,196,.15),transparent 70%); top:-200px; right:-150px; }
+  .bg-blob-2 { width:540px; height:540px; background:radial-gradient(circle,rgba(126,200,227,.12),transparent 70%); bottom:-130px; left:-100px; }
+  .bg-hearts {
+    position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.025;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 60C40 60 10 40 10 22 10 14 16 8 24 8 30 8 36 12 40 18 44 12 50 8 56 8 64 8 70 14 70 22 70 40 40 60Z' fill='%231E3A5F'/%3E%3C/svg%3E");
+    background-size:80px 80px;
+  }
+
+  /* ── LAYOUT ── */
+  .app { position:relative; z-index:1; max-width:860px; margin:0 auto; padding:32px 20px 100px; }
+
+  /* ── HEADER ── */
+  .page-header { text-align:center; margin-bottom:44px; }
+  .brand-lockup { display:inline-flex; align-items:center; gap:10px; margin-bottom:14px; }
+  .brand-label  { font-family:'Montserrat',sans-serif; font-size:11px; font-weight:700; letter-spacing:.2em; text-transform:uppercase; color:var(--navy); opacity:.6; }
+  .page-title   { font-family:'Montserrat',sans-serif; font-size:clamp(28px,5vw,42px); font-weight:900; color:var(--navy); line-height:1.1; margin-bottom:10px; }
+  .page-sub     { font-family:'Sora',sans-serif; font-size:15px; color:var(--muted); }
+
+  .refresh-bar  { display:flex; align-items:center; justify-content:center; gap:12px; margin-bottom:36px; }
+  .refresh-info { font-size:13px; color:var(--muted); }
+  .btn-refresh  {
+    background:transparent; color:var(--navy); border:2px solid var(--border);
+    border-radius:50px; padding:9px 22px; font-family:'Montserrat',sans-serif;
+    font-size:13px; font-weight:700; cursor:pointer; transition:all .2s;
+  }
+  .btn-refresh:hover { border-color:var(--blue); color:var(--blue); }
+  .btn-quiz {
+    background:linear-gradient(135deg,var(--navy),var(--blue)); color:#fff; border:none;
+    border-radius:50px; padding:11px 26px; font-family:'Montserrat',sans-serif;
+    font-size:13px; font-weight:800; cursor:pointer; transition:all .2s;
+    box-shadow:0 6px 20px rgba(27,125,196,.28); text-decoration:none; display:inline-block;
+  }
+  .btn-quiz:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(27,125,196,.38); }
+
+  /* ── CARD BASE ── */
+  .card {
+    background:var(--white); border-radius:24px;
+    box-shadow:0 8px 40px rgba(30,58,95,.08);
+    overflow:hidden; margin-bottom:28px;
+  }
+  .card-stripe { height:5px; background:linear-gradient(90deg,var(--navy),var(--blue),var(--light)); }
+
+  /* ── EMPTY / LOADING ── */
+  .spin-wrap  { display:flex; flex-direction:column; align-items:center; justify-content:center; padding:60px 20px; gap:14px; }
+  .spinner    { width:36px; height:36px; border:3.5px solid var(--pale); border-top-color:var(--blue); border-radius:50%; animation:spin .7s linear infinite; }
+  .spin-label { font-family:'Sora',sans-serif; font-size:14px; color:var(--muted); }
+  @keyframes spin { to { transform:rotate(360deg); } }
+  .empty-state { text-align:center; padding:60px 20px; }
+  .empty-icon  { font-size:48px; margin-bottom:12px; }
+  .empty-msg   { font-family:'Sora',sans-serif; font-size:15px; color:var(--muted); }
+
+  /* ── PÓDIO ── */
+  .podium-section { padding:32px 24px 40px; }
+  .section-title  {
+    font-family:'Montserrat',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.15em; text-transform:uppercase; color:var(--navy); opacity:.5;
+    margin-bottom:28px; text-align:center;
+  }
+  .podium {
+    display:flex; align-items:flex-end; justify-content:center;
+    gap:16px; max-width:480px; margin:0 auto;
+  }
+  .podium-slot { display:flex; flex-direction:column; align-items:center; flex:1; max-width:140px; }
+  .p-avatar {
+    width:60px; height:60px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Montserrat',sans-serif; font-size:20px; font-weight:900;
+    color:#fff; margin-bottom:8px; box-shadow:0 4px 16px rgba(0,0,0,.18);
+    flex-shrink:0;
+  }
+  .p-avatar.gold   { background:linear-gradient(135deg,#F59E0B,#FCD34D); }
+  .p-avatar.silver { background:linear-gradient(135deg,#64748B,#94A3B8); }
+  .p-avatar.bronze { background:linear-gradient(135deg,#92400E,#B45309); }
+  .p-name  { font-family:'Sora',sans-serif; font-size:12px; font-weight:700; color:var(--navy); text-align:center; margin-bottom:4px; line-height:1.3; word-break:break-word; }
+  .p-pct   { font-family:'Montserrat',sans-serif; font-size:18px; font-weight:900; color:var(--blue); margin-bottom:4px; }
+  .p-time  { font-size:11px; color:var(--muted); margin-bottom:6px; }
+  .p-block {
+    width:100%; border-radius:10px 10px 0 0;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Montserrat',sans-serif; font-size:22px;
+  }
+  .p-block.gold   { height:120px; background:linear-gradient(180deg,rgba(245,158,11,.18),rgba(245,158,11,.06)); border:2px solid rgba(245,158,11,.3); border-bottom:none; }
+  .p-block.silver { height:88px;  background:linear-gradient(180deg,rgba(148,163,184,.15),rgba(148,163,184,.05)); border:2px solid rgba(148,163,184,.25); border-bottom:none; }
+  .p-block.bronze { height:64px;  background:linear-gradient(180deg,rgba(180,83,9,.15),rgba(180,83,9,.05));    border:2px solid rgba(180,83,9,.25);    border-bottom:none; }
+  .podium-base { height:6px; background:linear-gradient(90deg,var(--navy),var(--blue)); border-radius:3px; max-width:480px; margin:0 auto; }
+
+  /* ── TABELA ── */
+  .table-section { padding:0; }
+  .table-head {
+    display:grid; grid-template-columns:40px 1fr 80px 80px 80px;
+    gap:8px; align-items:center;
+    background:var(--navy); padding:14px 24px;
+  }
+  .th {
+    font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700;
+    letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5);
+  }
+  .trow {
+    display:grid; grid-template-columns:40px 1fr 80px 80px 80px;
+    gap:8px; align-items:center;
+    padding:14px 24px; border-bottom:1px solid var(--border); transition:background .15s;
+  }
+  .trow:last-child { border-bottom:none; }
+  .trow:hover { background:var(--pale); }
+  .trow.highlight { background:rgba(27,125,196,.07); }
+  .t-pos   { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:900; color:var(--muted); text-align:center; }
+  .t-pos.medal { font-size:18px; }
+  .t-name  { font-family:'Sora',sans-serif; font-size:14px; font-weight:600; color:var(--navy); }
+  .t-score { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:700; color:var(--body); text-align:center; }
+  .t-pct   { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:800; color:var(--blue); text-align:center; }
+  .t-time  { font-size:13px; color:var(--muted); text-align:center; }
+  .badge-pass { background:var(--green); color:#fff; font-size:10px; font-weight:700; border-radius:50px; padding:2px 8px; margin-left:6px; font-family:'Montserrat',sans-serif; letter-spacing:.05em; }
+  .badge-fail { background:var(--red); color:#fff; font-size:10px; font-weight:700; border-radius:50px; padding:2px 8px; margin-left:6px; font-family:'Montserrat',sans-serif; letter-spacing:.05em; }
+
+  /* ── FOOTER ── */
+  .page-footer { text-align:center; margin-top:52px; font-size:12px; color:var(--muted); line-height:2; }
+  .page-footer a { color:var(--blue); text-decoration:none; }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:var(--navy); color:#fff; padding:12px 24px; border-radius:50px;
+    font-family:'Sora',sans-serif; font-size:14px; font-weight:600;
+    box-shadow:0 8px 32px rgba(30,58,95,.28); transition:transform .35s cubic-bezier(.34,1.56,.64,1);
+    white-space:nowrap; z-index:9999;
+  }
+  .toast.up { transform:translateX(-50%) translateY(0); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes slideUp   { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn    { from{opacity:0} to{opacity:1} }
+  .anim-in { animation:slideUp .5s ease both; }
+  </style>
+</head>
+<body>
+
+<!-- Background decorativo -->
+<div class="bg-layer" aria-hidden="true">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+</div>
+<div class="bg-hearts" aria-hidden="true"></div>
+
+<main class="app">
+
+  <!-- Cabeçalho -->
+  <header class="page-header anim-in">
+    <div class="brand-lockup">
+      <!-- Logo AMV inline -->
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <circle cx="22" cy="22" r="22" fill="#1E3A5F"/>
+        <path d="M22 33C22 33 9 23 9 15C9 11 12 8 16 8C19 8 21 10 22 12C23 10 25 8 28 8C32 8 35 11 35 15C35 23 22 33 22 33Z" fill="#7EC8E3"/>
+      </svg>
+      <span class="brand-label">Corretora Amor à Vida</span>
+    </div>
+    <h1 class="page-title">🏆 Ranking Geral</h1>
+    <p class="page-sub">Módulo 02 — Análise de Mercado PME · Operadoras do DF</p>
+  </header>
+
+  <!-- Barra de ações -->
+  <div class="refresh-bar anim-in" style="animation-delay:.1s">
+    <span class="refresh-info" id="lastUpdate">Atualizando…</span>
+    <button class="btn-refresh" onclick="loadRanking()">↻ Atualizar</button>
+    <a class="btn-quiz" href="index.html">Fazer o Quiz</a>
+  </div>
+
+  <!-- Pódio -->
+  <div class="card anim-in" style="animation-delay:.2s">
+    <div class="card-stripe"></div>
+    <div class="podium-section">
+      <div class="section-title">Pódio — Top 3</div>
+      <div id="podiumWrap">
+        <div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela completa -->
+  <div class="card anim-in" style="animation-delay:.3s">
+    <div class="card-stripe"></div>
+    <div class="table-section">
+      <div class="table-head">
+        <div class="th">#</div>
+        <div class="th">Nome</div>
+        <div class="th" style="text-align:center">Acertos</div>
+        <div class="th" style="text-align:center">Nota</div>
+        <div class="th" style="text-align:center">Tempo</div>
+      </div>
+      <div id="tableBody">
+        <div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando…</div></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="page-footer">
+    Ranking atualizado automaticamente · <a href="index.html">Fazer o Quiz</a> · <a href="admin.html">Painel Admin</a><br>
+    Corretora Amor à Vida · SUSEP nº 202005903
+  </footer>
+
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ───────────────────────────────────────────────────────────────────
+   CONFIGURAÇÃO GOOGLE SHEETS
+   Cole aqui a mesma URL do Apps Script usada no index.html.
+─────────────────────────────────────────────────────────────────── */
+const SCRIPT_URL     = "https://script.google.com/macros/s/AKfycbyvcdGHis1cCUvTAY_0XqXe8Sn6Nxw9lA1eY9OjaFlmOSnVCVqaywtZkO1P4Q31Ob6e/exec";
+const SHEETS_ENABLED = SCRIPT_URL !== "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+
+/* Auto-refresh a cada 60 segundos */
+const REFRESH_INTERVAL = 60;
+let countdown = REFRESH_INTERVAL;
+let timer;
+
+const fmt = sec => `${Math.floor(sec/60)}:${String(sec%60).padStart(2,'0')}`;
+const initials = name => name.trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+function showToast(msg, ms=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('up');
+  clearTimeout(t._tid); t._tid = setTimeout(() => t.classList.remove('up'), ms);
+}
+
+function updateCountdown() {
+  document.getElementById('lastUpdate').textContent =
+    `Próxima atualização em ${countdown}s`;
+  countdown--;
+  if (countdown < 0) { countdown = REFRESH_INTERVAL; loadRanking(); }
+}
+
+async function loadRanking() {
+  let results = [];
+
+  if (SHEETS_ENABLED) {
+    try {
+      const res  = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) results = data;
+    } catch(e) {
+      console.warn('Sheets error, usando localStorage:', e);
+    }
+  }
+
+  if (!results.length) {
+    results = JSON.parse(localStorage.getItem('amv_quiz_results') || '[]');
+  }
+
+  /* Ordenação: % desc → tempo asc */
+  results.sort((a, b) =>
+    b.percentage !== a.percentage ? b.percentage - a.percentage : a.time - b.time
+  );
+
+  renderPodium(results);
+  renderTable(results);
+
+  const now = new Date().toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit', second:'2-digit' });
+  document.getElementById('lastUpdate').textContent = `Atualizado às ${now} · próxima em ${REFRESH_INTERVAL}s`;
+  countdown = REFRESH_INTERVAL;
+}
+
+function renderPodium(results) {
+  const wrap = document.getElementById('podiumWrap');
+  const top  = results.slice(0, 3);
+
+  if (!top.length) {
+    wrap.innerHTML = '<div class="empty-state"><div class="empty-icon">🏅</div><div class="empty-msg">Ainda não há resultados.<br>Seja o primeiro a completar o quiz!</div></div>';
+    return;
+  }
+
+  /* Ordem visual: 2º (esq), 1º (centro), 3º (dir) */
+  const order  = [top[1], top[0], top[2]].filter(Boolean);
+  const classes = top[1] ? ['silver','gold','bronze'] : ['gold'];
+
+  const slots = order.map((r, vi) => {
+    const rank  = results.indexOf(r);
+    const cls   = classes[vi];
+    const label = cls === 'gold' ? '🥇' : cls === 'silver' ? '🥈' : '🥉';
+    return `
+      <div class="podium-slot">
+        <div class="p-avatar ${cls}">${initials(r.name)}</div>
+        <div class="p-name">${r.name}</div>
+        <div class="p-pct">${r.percentage}%</div>
+        <div class="p-time">⏱ ${fmt(r.time)}</div>
+        <div class="p-block ${cls}">${label}</div>
+      </div>`;
+  });
+
+  wrap.innerHTML = `<div class="podium">${slots.join('')}</div><div class="podium-base"></div>`;
+}
+
+function renderTable(results) {
+  const body = document.getElementById('tableBody');
+  if (!results.length) {
+    body.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-msg">Nenhum resultado ainda.</div></div>';
+    return;
+  }
+
+  const medals = { 0:'🥇', 1:'🥈', 2:'🥉' };
+  body.innerHTML = results.map((r, i) => {
+    const pos   = medals[i] ? `<span class="t-pos medal">${medals[i]}</span>` : `<span class="t-pos">${i+1}</span>`;
+    const badge = r.percentage >= 70
+      ? '<span class="badge-pass">APROVADO</span>'
+      : '<span class="badge-fail">REPROVADO</span>';
+    return `
+      <div class="trow${i < 3 ? ' highlight' : ''}">
+        ${pos}
+        <div class="t-name">${r.name}${badge}</div>
+        <div class="t-score">${r.score}/${r.total || 21}</div>
+        <div class="t-pct">${r.percentage}%</div>
+        <div class="t-time">${fmt(r.time)}</div>
+      </div>`;
+  }).join('');
+}
+
+/* Inicializa */
+loadRanking();
+clearInterval(timer);
+timer = setInterval(updateCountdown, 1000);
+</script>
+</body>
+</html>

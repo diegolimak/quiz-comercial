@@ -1,0 +1,1295 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quiz de Treinamento PME | Corretora Amor à Vida</title>
+  <meta name="description" content="Quiz interativo de treinamento interno — Módulo 02 Análise de Mercado PME · Operadoras do DF">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800;900&family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+  /* ═══════════════════════════════════════════════════════════════════
+     BRAND SYSTEM — Corretora Amor à Vida  (brand-system-amor-a-vida-v2)
+     Paleta, tipografia e componentes alinhados à identidade da marca
+  ═══════════════════════════════════════════════════════════════════ */
+  :root {
+    --navy:      #1E3A5F;
+    --navy-dark: #152B47;
+    --blue:      #1B7DC4;
+    --light:     #7EC8E3;
+    --pale:      #EAF5FB;
+    --ice2:      #C8DFF0;
+    --off-white: #F5F4F0;
+    --white:     #FFFFFF;
+    --text:      #1E3A5F;
+    --body:      #3A4A5C;
+    --muted:     #7A8999;
+    --border:    rgba(30,58,95,.10);
+    --green:     #16a34a;
+    --green-bg:  #dcfce7;
+    --green-bd:  #86efac;
+    --red:       #dc2626;
+    --red-bg:    #fee2e2;
+    --red-bd:    #fca5a5;
+    --yellow:    #f59e0b;
+    /* Operadoras */
+    --bradesco:  #cc0000;
+    --amil:      #0057a8;
+    --sula:      #f47920;
+    --unimed:    #009847;
+    --porto:     #003399;
+    --quallity:  #7b2d8b;
+    --medsenior: #1a7a4a;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--off-white);
+    color: var(--body);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── BACKGROUND ── */
+  .bg-layer { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .bg-blob {
+    position: absolute; border-radius: 50%; filter: blur(110px);
+    will-change: transform;
+  }
+  .bg-blob-1 {
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, rgba(27,125,196,.16), transparent 70%);
+    top: -200px; right: -150px;
+  }
+  .bg-blob-2 {
+    width: 540px; height: 540px;
+    background: radial-gradient(circle, rgba(126,200,227,.13), transparent 70%);
+    bottom: -130px; left: -100px;
+  }
+  .bg-blob-3 {
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, rgba(30,58,95,.07), transparent 70%);
+    top: 45%; left: 55%;
+  }
+  /* Padrão de corações — identidade Amor à Vida */
+  .bg-hearts {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .025;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 60C40 60 10 40 10 22 10 14 16 8 24 8 30 8 36 12 40 18 44 12 50 8 56 8 64 8 70 14 70 22 70 40 40 60Z' fill='%231E3A5F'/%3E%3C/svg%3E");
+    background-size: 80px 80px;
+  }
+
+  /* ── LAYOUT ── */
+  .app { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; padding: 32px 20px 100px; }
+
+  /* ── APP HEADER ── */
+  .app-header { text-align: center; margin-bottom: 36px; }
+  .brand-lockup { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .brand-label {
+    font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: .2em; text-transform: uppercase; color: var(--navy); opacity: .6;
+  }
+  .app-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(26px, 4vw, 42px); font-weight: 900;
+    color: var(--navy); line-height: 1.05; letter-spacing: -.03em; margin-bottom: 8px;
+  }
+  .app-title em { font-style: normal; color: var(--blue); }
+  .app-sub { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+  /* ── SCREENS ── */
+  .screen { display: none; }
+  .screen.visible {
+    display: block;
+    animation: screenIn .45s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateY(26px) scale(.99); }
+    to   { opacity: 1; transform: translateY(0)  scale(1); }
+  }
+  @keyframes fadeIn  { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes iconBounce {
+    from { transform: scale(.3) rotate(-20deg); opacity: 0; }
+    to   { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  @keyframes pctReveal {
+    from { transform: scale(.5); opacity: 0; }
+    to   { transform: scale(1); opacity: 1; }
+  }
+  @keyframes shimmer { to { left: 220%; } }
+  @keyframes spin    { to { transform: rotate(360deg); } }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--white); border-radius: 24px;
+    box-shadow: 0 8px 48px rgba(30,58,95,.10), 0 2px 8px rgba(30,58,95,.05);
+    overflow: hidden;
+  }
+  .card-stripe { height: 5px; background: linear-gradient(90deg, var(--navy) 0%, var(--blue) 50%, var(--light) 100%); }
+  .card-inner  { padding: 52px 44px; text-align: center; }
+
+  /* ── SHARED ── */
+  .screen-icon {
+    font-size: 68px; display: block; margin-bottom: 18px;
+    animation: iconBounce .65s cubic-bezier(.34,1.56,.64,1) .1s both;
+  }
+  .screen-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(24px, 3.5vw, 34px); font-weight: 900;
+    color: var(--navy); letter-spacing: -.02em; margin-bottom: 10px;
+  }
+  .screen-sub {
+    font-size: 15px; color: var(--muted); line-height: 1.7;
+    max-width: 440px; margin: 0 auto 32px;
+  }
+
+  /* ── INPUT ── */
+  .input-label {
+    display: block; text-align: left;
+    font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--navy); margin-bottom: 8px;
+  }
+  .text-input {
+    width: 100%; padding: 18px 22px;
+    border: 2.5px solid rgba(30,58,95,.15); border-radius: 16px;
+    font-family: 'Sora', sans-serif; font-size: 18px; font-weight: 600;
+    color: var(--navy); background: var(--pale); outline: none; text-align: center;
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .text-input:focus { border-color: var(--blue); box-shadow: 0 0 0 4px rgba(27,125,196,.12); background: #fff; }
+  .text-input::placeholder { color: var(--muted); font-weight: 400; font-size: 16px; }
+  .input-wrap { margin-bottom: 28px; }
+  .input-error { display: none; text-align: left; color: var(--red); font-size: 13px; font-weight: 600; margin-top: 8px; }
+  .input-error.visible { display: block; animation: fadeIn .2s ease; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: linear-gradient(135deg, var(--navy) 0%, var(--blue) 100%);
+    color: #fff; border: none; border-radius: 50px; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 800; letter-spacing: .03em;
+    padding: 18px 54px; box-shadow: 0 8px 28px rgba(27,125,196,.3);
+    transition: transform .25s, box-shadow .25s; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 44px rgba(27,125,196,.42); }
+  .btn-primary:active { transform: translateY(-1px); }
+  .btn-secondary {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    background: transparent; color: var(--navy); border: 2.5px solid rgba(30,58,95,.2);
+    border-radius: 50px; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 700; letter-spacing: .02em;
+    padding: 16px 38px; transition: all .2s; -webkit-tap-highlight-color: transparent;
+  }
+  .btn-secondary:hover { border-color: var(--blue); color: var(--blue); background: rgba(27,125,196,.04); }
+  .btn-ghost {
+    background: none; border: none; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted);
+    text-decoration: underline; text-underline-offset: 3px; padding: 8px; transition: color .2s;
+  }
+  .btn-ghost:hover { color: var(--navy); }
+  .btn-stack { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+
+  /* ── INTRO ── */
+  .name-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff; font-family: 'Sora', sans-serif; font-size: 16px; font-weight: 700;
+    padding: 12px 30px; border-radius: 50px; margin-bottom: 18px;
+  }
+  .pass-alert {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: linear-gradient(135deg, #e8f8f0, #d1f5e0);
+    border: 1.5px solid var(--green-bd); border-radius: 14px; padding: 14px 20px;
+    font-size: 14px; color: #166534; font-weight: 600; margin-bottom: 22px; line-height: 1.5;
+  }
+  .op-chips { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 28px; }
+  .op-chip { padding: 7px 15px; border-radius: 50px; font-size: 12px; font-weight: 700; color: #fff; letter-spacing: .02em; white-space: nowrap; }
+  .intro-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 32px; }
+  .intro-stat { background: var(--pale); border-radius: 18px; padding: 18px 12px; }
+  .intro-stat-n { font-family: 'Montserrat', sans-serif; font-size: 34px; font-weight: 900; color: var(--navy); margin-bottom: 4px; line-height: 1; }
+  .intro-stat-l { font-size: 12px; color: var(--muted); font-weight: 500; }
+
+  /* ── BARRA DE PROGRESSO ── */
+  .progress-wrap {
+    background: var(--white); border-radius: 18px; padding: 14px 20px; margin-bottom: 18px;
+    box-shadow: 0 2px 12px rgba(30,58,95,.07);
+    display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 14px;
+  }
+  .progress-track { height: 8px; background: var(--pale); border-radius: 4px; overflow: hidden; }
+  .progress-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--navy), var(--blue), var(--light));
+    transition: width .5s cubic-bezier(.34,1.56,.64,1);
+    position: relative; overflow: hidden;
+  }
+  /* Efeito shimmer na barra */
+  .progress-fill::after {
+    content: ''; position: absolute; top: 0; bottom: 0; left: -100%; width: 60%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+    animation: shimmer 2s linear infinite;
+  }
+  .progress-label  { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; color: var(--navy); white-space: nowrap; }
+  .progress-timer  { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700; color: var(--muted); white-space: nowrap; min-width: 52px; text-align: right; }
+
+  /* ── MINI-STATS (quiz) ── */
+  .mini-stats { display: flex; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+  .mini-stat {
+    flex: 1; min-width: 88px; background: var(--white); border-radius: 14px; padding: 10px 14px;
+    display: flex; align-items: center; gap: 8px;
+    box-shadow: 0 2px 8px rgba(30,58,95,.07); font-size: 13px; font-weight: 600; color: var(--muted);
+  }
+  .mini-n { font-family: 'Montserrat', sans-serif; font-size: 17px; font-weight: 900; line-height: 1; }
+  .n-green  { color: var(--green); }
+  .n-red    { color: var(--red); }
+  .n-yellow { color: var(--yellow); }
+
+  /* ── CARD DE PERGUNTA ── */
+  .q-card { background: var(--white); border-radius: 24px; box-shadow: 0 8px 48px rgba(30,58,95,.10); overflow: hidden; }
+  .q-header { padding: 28px 36px; position: relative; overflow: hidden; transition: background .3s; }
+  .q-header::before { content: ''; position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; border-radius: 50%; background: rgba(255,255,255,.07); pointer-events: none; }
+  .q-header::after  { content: ''; position: absolute; bottom: -80px; left: 20px; width: 340px; height: 340px; border-radius: 50%; background: rgba(255,255,255,.04); pointer-events: none; }
+  /* Headers coloridos por operadora */
+  .hdr-bradesco  { background: linear-gradient(135deg, #8b0000 0%, #cc0000 100%); }
+  .hdr-amil      { background: linear-gradient(135deg, #00336e 0%, #0057a8 100%); }
+  .hdr-sula      { background: linear-gradient(135deg, #c05a10 0%, #f47920 100%); }
+  .hdr-unimed    { background: linear-gradient(135deg, #006630 0%, #009847 100%); }
+  .hdr-porto     { background: linear-gradient(135deg, #001f6b 0%, #003399 100%); }
+  .hdr-quallity  { background: linear-gradient(135deg, #5a1a6e 0%, #7b2d8b 100%); }
+  .hdr-medsenior { background: linear-gradient(135deg, #0e4224 0%, #1a7a4a 100%); }
+  .hdr-geral     { background: linear-gradient(135deg, #1E3A5F 0%, #1B7DC4 100%); }
+  .q-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,.2); backdrop-filter: blur(8px);
+    color: rgba(255,255,255,.95); font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: 5px 14px; border-radius: 20px; margin-bottom: 12px; position: relative; z-index: 1;
+  }
+  .q-num {
+    font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase; color: rgba(255,255,255,.5);
+    margin-bottom: 8px; position: relative; z-index: 1;
+  }
+  .q-text {
+    font-family: 'Sora', sans-serif; font-size: clamp(16px, 2.5vw, 20px); font-weight: 700;
+    color: #fff; line-height: 1.45; position: relative; z-index: 1;
+  }
+  .q-body { padding: 28px 36px 32px; }
+
+  /* ── OPÇÕES ── */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+  .opt {
+    width: 100%; background: var(--pale); border: 2px solid transparent; border-radius: 16px;
+    padding: 16px 20px; text-align: left; cursor: pointer;
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 500; color: var(--text);
+    transition: all .2s; position: relative; overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .opt::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(90deg, rgba(27,125,196,.07), transparent);
+    opacity: 0; transition: opacity .2s; pointer-events: none;
+  }
+  .opt:hover:not([disabled])::after { opacity: 1; }
+  .opt:hover:not([disabled]) { border-color: var(--blue); transform: translateX(4px); box-shadow: 0 4px 18px rgba(27,125,196,.14); }
+  .opt[disabled] { cursor: default; }
+  .opt-letter {
+    width: 34px; height: 34px; border-radius: 10px; flex-shrink: 0;
+    background: rgba(30,58,95,.12);
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; color: var(--navy);
+    transition: all .2s;
+  }
+  .opt.opt-correct { background: var(--green-bg); border-color: var(--green); transform: translateX(0) !important; }
+  .opt.opt-correct .opt-letter { background: var(--green); color: #fff; }
+  .opt.opt-wrong   { background: var(--red-bg);   border-color: var(--red); }
+  .opt.opt-wrong   .opt-letter { background: var(--red);   color: #fff; }
+  .opt.opt-dim     { opacity: .35; }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    margin-top: 20px; border-radius: 16px; padding: 16px 20px; display: none;
+    gap: 12px; align-items: flex-start;
+    animation: feedIn .3s cubic-bezier(.22,1,.36,1);
+  }
+  @keyframes feedIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+  .feedback.visible { display: flex; }
+  .fb-ok  { background: var(--green-bg); color: #15803d; border: 1.5px solid var(--green-bd); }
+  .fb-err { background: var(--red-bg);   color: #b91c1c; border: 1.5px solid var(--red-bd); }
+  .fb-icon { font-size: 22px; flex-shrink: 0; line-height: 1.4; }
+  .fb-body { font-size: 14px; line-height: 1.7; }
+  .fb-body strong { display: block; font-weight: 800; font-size: 15px; margin-bottom: 3px; }
+  .btn-next {
+    margin-top: 22px; width: 100%;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    color: #fff; border: none; border-radius: 16px; cursor: pointer;
+    font-family: 'Montserrat', sans-serif; font-size: 15px; font-weight: 800;
+    padding: 18px; display: none; align-items: center; justify-content: center; gap: 8px;
+    transition: all .2s; box-shadow: 0 4px 18px rgba(27,125,196,.22);
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-next.visible { display: flex; animation: fadeIn .3s ease; }
+  .btn-next:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(27,125,196,.38); }
+
+  /* ── RESULTADO ── */
+  .result-emoji { font-size: 80px; display: block; margin-bottom: 14px; animation: iconBounce .65s cubic-bezier(.34,1.56,.64,1) .15s both; }
+  .score-pct {
+    font-family: 'Montserrat', sans-serif;
+    font-size: clamp(72px, 12vw, 96px); font-weight: 900; line-height: 1; letter-spacing: -.04em;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    animation: pctReveal .6s cubic-bezier(.34,1.56,.64,1) .3s both; margin-bottom: 6px;
+  }
+  .score-label { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .status-badge {
+    display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 50px;
+    font-family: 'Montserrat', sans-serif; font-size: 14px; font-weight: 800;
+    letter-spacing: .06em; text-transform: uppercase; margin-bottom: 28px;
+  }
+  .sb-ok  { background: linear-gradient(135deg,#16a34a,#22c55e); color:#fff; box-shadow:0 6px 24px rgba(34,197,94,.35); }
+  .sb-err { background: linear-gradient(135deg,#dc2626,#ef4444); color:#fff; box-shadow:0 6px 24px rgba(239,68,68,.28); }
+  .result-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 28px; }
+  .result-stat { background: var(--pale); border-radius: 18px; padding: 20px 14px; }
+  .result-stat-n { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 900; margin-bottom: 4px; }
+  .rn-g { color: var(--green); } .rn-r { color: var(--red); } .rn-b { color: var(--blue); }
+  .result-stat-l { font-size: 12px; color: var(--muted); font-weight: 500; }
+  /* Barras de desempenho por operadora */
+  .op-breakdown { margin: 8px 0 28px; text-align: left; }
+  .op-bd-title {
+    font-family: 'Montserrat', sans-serif; font-size: 11px; font-weight: 800;
+    letter-spacing: .12em; text-transform: uppercase; color: var(--navy);
+    margin-bottom: 14px; text-align: center;
+  }
+  .op-row { display: flex; align-items: center; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); }
+  .op-row:last-child { border-bottom: none; }
+  .op-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .op-name { font-size: 13px; font-weight: 600; color: var(--navy); min-width: 108px; }
+  .op-track { flex: 1; height: 8px; background: var(--pale); border-radius: 4px; overflow: hidden; }
+  .op-fill  { height: 100%; border-radius: 4px; transition: width .9s cubic-bezier(.34,1.56,.64,1); }
+  .op-pct   { font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 800; min-width: 38px; text-align: right; }
+  .result-msg { background: var(--pale); border-left: 4px solid var(--blue); border-radius: 16px; padding: 18px 22px; font-size: 15px; line-height: 1.7; color: var(--navy); text-align: left; margin-bottom: 28px; }
+
+  /* ── GABARITO ── */
+  .review-wrap { display: none; margin-top: 32px; }
+  .review-wrap.open { display: block; animation: screenIn .3s ease; }
+  .review-heading { font-family:'Montserrat',sans-serif; font-size:16px; font-weight:800; color:var(--navy); text-transform:uppercase; letter-spacing:.06em; margin-bottom:16px; }
+  .review-item { background:var(--white); border-radius:16px; padding:18px 22px; margin-bottom:10px; border-left:4px solid transparent; box-shadow:0 2px 10px rgba(30,58,95,.06); }
+  .review-item.ri-ok  { border-left-color: var(--green); }
+  .review-item.ri-err { border-left-color: var(--red); }
+  .review-q { font-size:14px; font-weight:600; color:var(--navy); margin-bottom:8px; }
+  .review-a { display:flex; gap:8px; align-items:flex-start; font-size:13px; color:var(--muted); margin-bottom:4px; line-height:1.5; }
+  .rtag { font-size:10px; font-weight:800; padding:2px 8px; border-radius:5px; flex-shrink:0; margin-top:1px; text-transform:uppercase; letter-spacing:.05em; }
+  .rtag-ok  { background:var(--green-bg); color:#166534; }
+  .rtag-err { background:var(--red-bg);   color:#991b1b; }
+
+  /* ══ RANKING ══ */
+  .ranking-header { text-align: center; margin-bottom: 32px; }
+  .ranking-title { font-family:'Montserrat',sans-serif; font-size:28px; font-weight:900; color:var(--navy); margin-bottom:6px; }
+  .ranking-sub { font-size:14px; color:var(--muted); }
+
+  /* Caixa "seu resultado" */
+  .my-result {
+    background: linear-gradient(135deg, rgba(27,125,196,.10), rgba(126,200,227,.07));
+    border: 2px solid rgba(27,125,196,.28); border-radius: 22px; padding: 24px 28px; margin-bottom: 28px;
+  }
+  .my-label { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:800; letter-spacing:.15em; text-transform:uppercase; color:var(--blue); margin-bottom:8px; }
+  .my-name  { font-family:'Montserrat',sans-serif; font-size:20px; font-weight:900; color:var(--navy); margin-bottom:14px; }
+  .my-stats { display:flex; gap:24px; flex-wrap:wrap; }
+  .my-s { display:flex; flex-direction:column; }
+  .my-s-val { font-family:'Montserrat',sans-serif; font-size:26px; font-weight:900; color:var(--navy); line-height:1; }
+  .my-s-val.blue-val { color: var(--blue); }
+  .my-s-lbl { font-size:11px; color:var(--muted); margin-top:3px; }
+
+  /* ── PÓDIO ── */
+  .podium-section { margin-bottom: 36px; }
+  .podium { display:flex; align-items:flex-end; justify-content:center; gap:10px; padding:0 10px; }
+  .podium-slot { display:flex; flex-direction:column; align-items:center; flex:1; max-width:220px; }
+  .podium-info { display:flex; flex-direction:column; align-items:center; padding-bottom:10px; }
+  .podium-medal { font-size:24px; margin-bottom:6px; }
+  .pod-av {
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-family:'Montserrat',sans-serif; font-weight:900; color:#fff;
+    margin-bottom:8px; border:3px solid #fff; box-shadow:0 4px 16px rgba(0,0,0,.18);
+    width:58px; height:58px; font-size:20px;
+  }
+  .pod-av.av-1 { width:72px; height:72px; font-size:24px; background:linear-gradient(135deg,#d4a017,#f5c842); border-color:#f5c842; box-shadow:0 6px 24px rgba(212,160,23,.4); }
+  .pod-av.av-2 { background:linear-gradient(135deg,#7a7a7a,#b0b0b0); border-color:#b0b0b0; }
+  .pod-av.av-3 { background:linear-gradient(135deg,#8B4513,#cd7f32); border-color:#cd7f32; }
+  .pod-name  { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:800; color:var(--navy); text-align:center; line-height:1.2; margin-bottom:2px; max-width:140px; }
+  .pod-score { font-family:'Montserrat',sans-serif; font-size:15px; font-weight:900; margin-bottom:2px; }
+  .pod-score.ps-1 { font-size:20px; color:#c79800; }
+  .pod-score.ps-2 { color:#7a7a7a; }
+  .pod-score.ps-3 { color:#8B4513; }
+  .pod-time { font-size:11px; color:var(--muted); }
+  .pod-block { width:100%; border-radius:14px 14px 0 0; display:flex; align-items:center; justify-content:center; font-family:'Montserrat',sans-serif; font-size:30px; font-weight:900; color:rgba(255,255,255,.5); }
+  .pb-1 { background:linear-gradient(180deg,#e8b422,#c79800); height:120px; }
+  .pb-2 { background:linear-gradient(180deg,#a5a5a5,#7a7a7a); height:88px; }
+  .pb-3 { background:linear-gradient(180deg,#cd7f32,#8B4513); height:64px; }
+
+  /* ── TABELA DE RANKING ── */
+  .rank-table { background:var(--white); border-radius:22px; box-shadow:0 6px 36px rgba(30,58,95,.08); overflow:hidden; margin-bottom:28px; }
+  .rank-thead { display:grid; grid-template-columns:52px 1fr 80px 80px 68px; padding:14px 24px; gap:8px; background:var(--navy); }
+  .rth { font-family:'Montserrat',sans-serif; font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.5); }
+  .rank-row { display:grid; grid-template-columns:52px 1fr 80px 80px 68px; padding:15px 24px; gap:8px; align-items:center; border-bottom:1px solid var(--border); transition:background .15s; }
+  .rank-row:last-child { border-bottom:none; }
+  .rank-row:hover { background:var(--pale); }
+  .rr-1 { background:rgba(212,160,23,.06); }
+  .rr-2 { background:rgba(160,160,160,.04); }
+  .rr-3 { background:rgba(205,127,50,.05); }
+  .rr-me { background:rgba(27,125,196,.07); border-left:3px solid var(--blue); }
+  .r-pos { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:900; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+  .r-pos.medal { font-size:20px; }
+  .r-name { font-family:'Sora',sans-serif; font-size:14px; font-weight:600; color:var(--navy); }
+  .me-tag { font-size:10px; color:var(--blue); font-weight:700; margin-left:6px; }
+  .r-score { font-family:'Montserrat',sans-serif; font-size:14px; font-weight:900; }
+  .rs-g { color:var(--green); } .rs-y { color:var(--yellow); } .rs-r { color:var(--red); }
+  .r-pct  { font-family:'Montserrat',sans-serif; font-size:13px; font-weight:800; color:var(--blue); }
+  .r-time { font-size:12px; color:var(--muted); }
+
+  /* ── SPINNER ── */
+  .spin-wrap { display:flex; flex-direction:column; align-items:center; padding:60px 20px; }
+  .spinner { width:46px; height:46px; border-radius:50%; border:4px solid var(--pale); border-top-color:var(--blue); animation:spin .8s linear infinite; margin-bottom:14px; }
+  .spin-label { font-size:15px; color:var(--muted); }
+
+  /* ── ESTADO VAZIO ── */
+  .empty-state { text-align:center; padding:48px 24px; color:var(--muted); font-size:15px; line-height:1.7; }
+  .empty-icon  { font-size:44px; display:block; margin-bottom:12px; }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--navy); color: #fff;
+    font-family: 'Montserrat', sans-serif; font-size: 13px; font-weight: 700;
+    padding: 14px 28px; border-radius: 50px;
+    box-shadow: 0 8px 32px rgba(30,58,95,.35);
+    transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+    z-index: 1000; white-space: nowrap; pointer-events: none;
+  }
+  .toast.up { transform: translateX(-50%) translateY(0); }
+
+  /* ── CONFETTI ── */
+  #confettiCanvas { position:fixed; inset:0; z-index:999; pointer-events:none; opacity:0; transition:opacity .3s; }
+  #confettiCanvas.active { opacity:1; }
+
+  /* ── LINK ADMIN ── */
+  .admin-link { text-align:center; margin-top:32px; }
+  .admin-link a { font-family:'Montserrat',sans-serif; font-size:12px; font-weight:600; color:var(--muted); text-decoration:none; opacity:.6; transition:opacity .2s; }
+  .admin-link a:hover { opacity:1; color:var(--navy); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 600px) {
+    .card-inner { padding:36px 22px; }
+    .q-header { padding:22px 22px; }
+    .q-body { padding:20px 20px 24px; }
+    .q-text { font-size:16px; }
+    .opt { font-size:14px; padding:14px 16px; }
+    .intro-stats, .result-stats { grid-template-columns:1fr 1fr; }
+    .score-pct { font-size:72px; }
+    .rank-thead, .rank-row { grid-template-columns:40px 1fr 66px 54px; }
+    .rank-thead .rth:last-child, .rank-row .r-time { display:none; }
+    .progress-timer { display:none; }
+    .pod-av { width:48px; height:48px; font-size:16px; }
+    .pod-av.av-1 { width:60px; height:60px; font-size:20px; }
+    .pb-1 { height:88px; } .pb-2 { height:64px; } .pb-3 { height:50px; }
+  }
+  </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-layer">
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+  <div class="bg-blob bg-blob-3"></div>
+</div>
+<div class="bg-hearts"></div>
+
+<!-- Confetti -->
+<canvas id="confettiCanvas"></canvas>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ APP ══ -->
+<div class="app">
+
+  <!-- Header da marca -->
+  <div class="app-header">
+    <div class="brand-lockup">
+      <!-- Logo coração AMV inline (sem dependência externa) -->
+      <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+        <circle cx="22" cy="22" r="22" fill="#1E3A5F"/>
+        <path d="M22 33C22 33 9 23 9 15C9 11 12 8 16 8C19 8 21 10 22 12C23 10 25 8 28 8C32 8 35 11 35 15C35 23 22 33 22 33Z" fill="#7EC8E3"/>
+      </svg>
+      <span class="brand-label">Corretora Amor à Vida</span>
+    </div>
+    <h1 class="app-title">Quiz de <em>Treinamento</em></h1>
+    <p class="app-sub">Módulo 02 — Análise de Mercado PME · Operadoras do DF</p>
+  </div>
+
+  <!-- ══ TELA 1: NOME ══ -->
+  <div class="screen visible" id="screenName">
+    <div class="card">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <span class="screen-icon">👋</span>
+        <h2 class="screen-title">Olá! Antes de começar…</h2>
+        <p class="screen-sub">Informe seu nome completo para registrar sua participação no ranking geral.</p>
+        <div class="input-wrap">
+          <label class="input-label" for="nameInput">Seu nome completo</label>
+          <input type="text" id="nameInput" class="text-input"
+            placeholder="Ex: Maria Silva Santos" autocomplete="name"
+            onkeydown="if(event.key==='Enter') confirmName()"/>
+          <div class="input-error" id="nameError">⚠️ Informe nome e sobrenome (mínimo 2 palavras).</div>
+        </div>
+        <button class="btn-primary" onclick="confirmName()">Continuar →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TELA 2: INTRO ══ -->
+  <div class="screen" id="screenIntro">
+    <div class="card">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <span class="screen-icon" style="font-size:56px">🏥</span>
+        <div class="name-badge" id="nameBadge">Olá! 👋</div>
+        <h2 class="screen-title" style="font-size:27px">Pronto(a) para o desafio?</h2>
+        <p class="screen-sub" style="margin-bottom:18px">21 perguntas sobre regras, carências e diferenciais das operadoras de saúde suplementar do DF.</p>
+        <div class="pass-alert">
+          <span style="font-size:20px">🎯</span>
+          <span>Nota mínima para aprovação: <strong>70%</strong> — aprovados recebem certificado!</span>
+        </div>
+        <div class="op-chips">
+          <span class="op-chip" style="background:#cc0000">💙 Bradesco</span>
+          <span class="op-chip" style="background:#0057a8">🔵 Amil</span>
+          <span class="op-chip" style="background:#f47920">🟠 SulAmérica</span>
+          <span class="op-chip" style="background:#009847">🟢 Seg. Unimed</span>
+          <span class="op-chip" style="background:#003399">🔷 Porto Seguro</span>
+          <span class="op-chip" style="background:#7b2d8b">🟣 Quallity</span>
+          <span class="op-chip" style="background:#1a7a4a">🌿 MedSênior</span>
+        </div>
+        <div class="intro-stats">
+          <div class="intro-stat"><div class="intro-stat-n">21</div><div class="intro-stat-l">Perguntas</div></div>
+          <div class="intro-stat"><div class="intro-stat-n">7</div><div class="intro-stat-l">Operadoras</div></div>
+          <div class="intro-stat"><div class="intro-stat-n">~10</div><div class="intro-stat-l">Minutos</div></div>
+        </div>
+        <button class="btn-primary" onclick="startQuiz()">Começar Quiz →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TELA 3: QUIZ ══ -->
+  <div class="screen" id="screenQuiz">
+    <!-- Barra de progresso + timer -->
+    <div class="progress-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div class="progress-label" id="progressLabel">1 / 21</div>
+      <div class="progress-timer" id="progressTimer">⏱ 0:00</div>
+    </div>
+    <!-- Mini-estatísticas ao vivo -->
+    <div class="mini-stats">
+      <div class="mini-stat">✅ <span class="mini-n n-green"  id="cCorrect">0</span>&nbsp;certas</div>
+      <div class="mini-stat">❌ <span class="mini-n n-red"    id="cWrong">0</span>&nbsp;erradas</div>
+      <div class="mini-stat">🔥 <span class="mini-n n-yellow" id="cStreak">0</span>&nbsp;seq.</div>
+    </div>
+    <!-- Card da pergunta -->
+    <div class="q-card" id="qCard">
+      <div class="q-header hdr-geral" id="qHeader">
+        <div class="q-badge" id="qBadge">—</div>
+        <div class="q-num"   id="qNum">Pergunta 1 de 21</div>
+        <div class="q-text"  id="qText">Carregando…</div>
+      </div>
+      <div class="q-body">
+        <div class="options" id="optionsList"></div>
+        <div class="feedback" id="feedback">
+          <span class="fb-icon" id="fbIcon"></span>
+          <div class="fb-body" id="fbBody"></div>
+        </div>
+        <button class="btn-next" id="btnNext" onclick="nextQ()">Próxima pergunta →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TELA 4: RESULTADO ══ -->
+  <div class="screen" id="screenResult">
+    <div class="card">
+      <div class="card-stripe"></div>
+      <div class="card-inner">
+        <span class="result-emoji" id="resEmoji">🎉</span>
+        <h2 class="screen-title" id="resTitle">Parabéns!</h2>
+        <p class="screen-sub" id="resSub" style="margin-bottom:16px"></p>
+        <div class="score-pct" id="scorePct">0%</div>
+        <div class="score-label" id="scoreLabel"></div>
+        <div id="statusWrap" style="margin-bottom:8px"></div>
+        <div class="result-stats">
+          <div class="result-stat"><div class="result-stat-n rn-g" id="resCorrect">0</div><div class="result-stat-l">Corretas</div></div>
+          <div class="result-stat"><div class="result-stat-n rn-r" id="resWrong">0</div><div class="result-stat-l">Erradas</div></div>
+          <div class="result-stat"><div class="result-stat-n rn-b" id="resTime">0:00</div><div class="result-stat-l">Tempo total</div></div>
+        </div>
+        <div class="op-breakdown">
+          <div class="op-bd-title">📊 Desempenho por Operadora</div>
+          <div id="opBreakdown"></div>
+        </div>
+        <div class="result-msg" id="resMsg"></div>
+        <div class="btn-stack">
+          <button class="btn-primary"   onclick="goRanking()">🏆 Ver Ranking Geral</button>
+          <button class="btn-secondary" onclick="retryQuiz()">🔄 Tentar Novamente</button>
+          <button class="btn-ghost"     onclick="toggleReview()">📋 Ver gabarito completo</button>
+        </div>
+      </div>
+    </div>
+    <!-- Gabarito (expansível) -->
+    <div class="review-wrap" id="reviewWrap">
+      <div class="review-heading">📋 Gabarito Completo</div>
+      <div id="reviewList"></div>
+    </div>
+  </div>
+
+  <!-- ══ TELA 5: RANKING ══ -->
+  <div class="screen" id="screenRanking">
+    <div class="ranking-header">
+      <h2 class="ranking-title">🏆 Ranking Geral</h2>
+      <p class="ranking-sub">Melhores resultados — Quiz de Treinamento PME</p>
+    </div>
+    <!-- Destaque do participante atual -->
+    <div id="myResultWrap"></div>
+    <!-- Pódio top 3 -->
+    <div class="podium-section" id="podiumWrap">
+      <div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando ranking…</div></div>
+    </div>
+    <!-- Tabela completa -->
+    <div id="rankTableWrap"></div>
+    <div style="text-align:center;margin-top:28px">
+      <button class="btn-secondary" onclick="goHome()">← Voltar ao início</button>
+    </div>
+  </div>
+
+  <!-- Link discreto para painel admin -->
+  <div class="admin-link">
+    <a href="admin.html" title="Painel da gerente">⚙ Painel Admin</a>
+  </div>
+
+</div><!-- /app -->
+
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+═══════════════════════════════════════════════════════════════════ -->
+<script>
+/* ───────────────────────────────────────────────────────────────────
+   CONFIGURAÇÃO GOOGLE SHEETS (via Apps Script)
+   ───────────────────────────────────────────────────────────────────
+   Para salvar resultados na planilha e exibir ranking compartilhado:
+
+   1. Abra sua planilha Google e acesse: Extensões → Apps Script
+   2. Cole o conteúdo de apps-script.gs → Salvar (Ctrl+S)
+   3. Clique em "Implantar" → "Nova implantação"
+      - Tipo: App da Web
+      - Executar como: Eu mesmo
+      - Quem tem acesso: Qualquer pessoa
+   4. Autorize e copie a URL gerada
+   5. Cole a URL abaixo substituindo "COLE_AQUI_A_URL_DO_APPS_SCRIPT"
+
+   Sem configuração: o quiz funciona normalmente com localStorage.
+─────────────────────────────────────────────────────────────────── */
+const SCRIPT_URL    = "https://script.google.com/macros/s/AKfycbyvcdGHis1cCUvTAY_0XqXe8Sn6Nxw9lA1eY9OjaFlmOSnVCVqaywtZkO1P4Q31Ob6e/exec";
+const SHEETS_ENABLED = SCRIPT_URL !== "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
+
+/* ───────────────────────────────────────────────────────────────────
+   BANCO DE QUESTÕES — Módulo 02 PME
+   Para adicionar novas perguntas: inclua um objeto no array QUESTIONS
+   seguindo o mesmo formato { op, opLabel, q, opts[], correct, explain }
+─────────────────────────────────────────────────────────────────── */
+const OP_COLORS = {
+  bradesco:'#cc0000', amil:'#0057a8', sula:'#f47920',
+  unimed:'#009847',   porto:'#003399', quallity:'#7b2d8b',
+  medsenior:'#1a7a4a', geral:'#1B7DC4'
+};
+const OP_NAMES = {
+  bradesco:'Bradesco', amil:'Amil', sula:'SulAmérica',
+  unimed:'Seg. Unimed', porto:'Porto Seguro', quallity:'Quallity',
+  medsenior:'MedSênior', geral:'Geral'
+};
+
+const QUESTIONS = [
+  /* ── BRADESCO ── */
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'A Bradesco Saúde aceita plano empresarial a partir de quantas vidas?',
+   opts:['1 vida','2 vidas','3 vidas','5 vidas'], correct:2,
+   explain:'O plano empresarial da Bradesco aceita a partir de 3 vidas. Amil e Seguros Unimed aceitam a partir de 2 vidas — diferença importante para empresas pequenas.'},
+
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Qual é a variação de preço entre as tabelas com e sem coparticipação na Bradesco?',
+   opts:['10%','20%','30%','33%'], correct:1,
+   explain:'A Bradesco tem apenas 20% de variação — a menor entre as operadoras. Amil chega a 30% e SulAmérica a 33,33%.'},
+
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Em caso de falecimento do titular, por quanto tempo a Bradesco oferece remissão gratuita ao dependente?',
+   opts:['6 meses','12 meses','18 meses','24 meses'], correct:1,
+   explain:'A Bradesco oferece 12 meses de remissão gratuita para cônjuge ou filho solteiro até 18 anos, em apólices ativas há mais de 12 meses.'},
+
+  /* ── AMIL ── */
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'Qual é o diferencial da Amil em relação à carência de consultas e exames simples?',
+   opts:['Zero carência','1 dia de carência','7 dias de carência','15 dias de carência'], correct:1,
+   explain:'A Amil tem carência de apenas 1 dia para consultas e exames simples — frente aos 15 dias da Bradesco, SulAmérica e Porto Seguro.'},
+
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'Qual é o limite máximo de idade para inclusão de vidas na Amil?',
+   opts:['59 anos','65 anos','69 anos, 11 meses e 30 dias','75 anos'], correct:2,
+   explain:'A Amil só aceita vidas até 69 anos, 11 meses e 30 dias. Para mais velhos, o MedSênior é a alternativa.'},
+
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'O aditivo de cobertura internacional da Amil cobre urgência e emergência com limite de até:',
+   opts:['USD 100.000','USD 200.000','USD 300.000','USD 500.000'], correct:2,
+   explain:'O aditivo internacional da Amil cobre até USD 300.000. Deve ser contratado somente na implantação. Nos produtos One, já vem gratuito.'},
+
+  /* ── SULAMERICA ── */
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'A remissão da SulAmérica cobre por quanto tempo e de que forma é contratada?',
+   opts:['12 meses, automática','12 meses, deve ser solicitada','24 meses, automática','24 meses, deve ser solicitada'], correct:3,
+   explain:'SulAmérica oferece 24 meses de remissão, porém NÃO é automática — precisa ser solicitada na contratação. Se não for pedida, não é concedida.'},
+
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'Na SulAmérica, o aproveitamento de carência é cancelado se o cliente ficou fora do plano por mais de:',
+   opts:['30 dias','45 dias','60 dias','90 dias'], correct:2,
+   explain:'Na SulAmérica, cancelado a 60 dias. Na Bradesco, apenas 30 dias.'},
+
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'A SulAmérica NÃO faz aproveitamento de carências para beneficiários a partir de qual idade?',
+   opts:['59 anos','63 anos','65 anos','70 anos'], correct:2,
+   explain:'A SulAmérica não aproveita carências para 65 anos ou mais. Mesmo com plano anterior há décadas, entrarão com carências completas.'},
+
+  /* ── SEGUROS UNIMED ── */
+  {op:'unimed', opLabel:'🟢 Seguros Unimed',
+   q:'Qual é o grande diferencial dos planos com coparticipação da Seguros Unimed?',
+   opts:['É a coparticipação mais barata do mercado','Possui limitador mensal de R$300 (regional) e R$350 (nacional Compact)','Não cobra coparticipação em internações','A coparticipação é cobrada só uma vez por mês'], correct:1,
+   explain:'A Seguros Unimed tem teto: no máximo R$300/mês no regional e R$350/mês no nacional Compact — independente do uso. Diferencial único no mercado.'},
+
+  {op:'unimed', opLabel:'🟢 Seguros Unimed',
+   q:'Para contratos de 2 a 29 vidas, a Seguros Unimed exige qual procedimento que outras operadoras não exigem?',
+   opts:['Exame médico presencial','Aprovação de 100% dos sócios','Perícia de vídeo para todos os titulares','Certidão negativa de débitos do CNPJ'], correct:2,
+   explain:'Das grandes seguradoras, a Seguros Unimed é a única que exige perícia de vídeo para todos os titulares em contratos de 2–29 vidas.'},
+
+  {op:'unimed', opLabel:'🟢 Seguros Unimed',
+   q:'Em quais regiões a Seguros Unimed permite comercialização direta, sem pleito?',
+   opts:['Todo o Brasil','DF, GO e MG','DF, SP capital e Salvador','DF e toda a região metropolitana de SP'], correct:2,
+   explain:'A Seguros Unimed comercializa diretamente para CNPJs do DF, SP capital e Salvador. Fora disso, é necessário pleito.'},
+
+  /* ── PORTO SEGURO ── */
+  {op:'porto', opLabel:'🔷 Porto Seguro',
+   q:'Qual é a exigência mínima de adesão da Porto Seguro para contratos empresariais?',
+   opts:['50% dos sócios ou funcionários','70% dos sócios ou funcionários','80% dos sócios ou funcionários','100% dos sócios ou funcionários'], correct:2,
+   explain:'A Porto Seguro exige entrada de pelo menos 80% dos sócios ou funcionários — mais restritivo que as demais operadoras.'},
+
+  {op:'porto', opLabel:'🔷 Porto Seguro',
+   q:'Qual é o prazo de fidelidade dos contratos empresariais da Porto Seguro (3–99 vidas)?',
+   opts:['12 meses','18 meses','24 meses','36 meses'], correct:2,
+   explain:'Contratos de 3–99 vidas na Porto Seguro: vigência e fidelidade de 24 meses com multa de 3× a média mensal.'},
+
+  {op:'porto', opLabel:'🔷 Porto Seguro',
+   q:'Na Porto Seguro, os dependentes podem ter produto diferente do titular?',
+   opts:['Sim, qualquer produto','Sim, mas só para filhos','Não — dependentes devem ter o mesmo produto do titular','Somente nos produtos da Linha P'], correct:2,
+   explain:'Na Porto Seguro, o dependente sempre precisa ter o mesmo produto do titular. A regra de coparticipação também é linear para todos.'},
+
+  /* ── QUALLITY ── */
+  {op:'quallity', opLabel:'🟣 Quallity',
+   q:'Qual é o principal diferencial da Quallity que nenhuma outra operadora PME do DF oferece?',
+   opts:['Cobertura internacional gratuita','Planos ambulatoriais para empresas','Remissão automática','Rede credenciada nacional'], correct:1,
+   explain:'A Quallity é a única operadora PME do DF que comercializa planos ambulatoriais — ideal para empresas que querem benefício acessível para classes C, D e E.'},
+
+  {op:'quallity', opLabel:'🟣 Quallity',
+   q:'Para beneficiários acima de 59 anos, a Quallity exige:',
+   opts:['Exame médico laboratorial','Perícia presencial ou por vídeo','Autorização especial da ANS','Carta de saúde assinada por médico'], correct:1,
+   explain:'A Quallity exige perícia presencial ou por vídeo para vidas acima de 59 anos — obstáculo operacional relevante para empresas com quadro mais envelhecido.'},
+
+  /* ── MEDSENIOR ── */
+  {op:'medsenior', opLabel:'🌿 MedSênior',
+   q:'A partir de qual idade o MedSênior aceita titulares?',
+   opts:['40 anos','44 anos','50 anos','59 anos'], correct:1,
+   explain:'O MedSênior aceita qualquer pessoa a partir de 44 anos. É produto exclusivo para melhor idade, sem tabela para jovens e sem dependentes.'},
+
+  {op:'medsenior', opLabel:'🌿 MedSênior',
+   q:'Qual é o grande diferencial contratual do MedSênior em relação ao cancelamento?',
+   opts:['O cliente pode cancelar sem multa a qualquer momento','A operadora pode cancelar com 30 dias de aviso','Contrato unilateral — só o cliente cancela (operadora cancela apenas por fraude ou inadimplência +60 dias)','Não há fidelidade mínima'], correct:2,
+   explain:'O MedSênior tem contrato unilateral: apenas o cliente pode rescindir. A operadora só cancela por fraude ou inadimplência acima de 60 dias.'},
+
+  /* ── MERCADO GERAL ── */
+  {op:'geral', opLabel:'🎯 Mercado Geral',
+   q:'Quais duas operadoras têm a MAIOR flexibilidade na aceitação de dependentes agregados?',
+   opts:['Bradesco e SulAmérica','Amil e Porto Seguro','Quallity e Seguros Unimed','SulAmérica e Porto Seguro'], correct:1,
+   explain:'Amil e Porto Seguro são as mais flexíveis para dependentes indiretos (pai, mãe, netos, irmãos, sogros, genros, noras). Ideais para incluir família ampliada.'},
+
+  {op:'geral', opLabel:'🎯 Mercado Geral',
+   q:'Qual operadora NÃO aceita CNPJ MEI?',
+   opts:['Bradesco','Porto Seguro','Seguros Unimed','SulAmérica'], correct:2,
+   explain:'A Seguros Unimed não comercializa para CNPJ MEI. A Bradesco aceita MEI, mas sem aproveitamento de carências.'},
+];
+
+const PASS_PCT = 70; /* nota mínima de aprovação */
+
+/* ── ESTADO DO QUIZ ── */
+let S = {
+  name:'', current:0, correct:0, wrong:0, streak:0, maxStreak:0,
+  answered:false, shuffled:[], answers:[], opStats:{},
+  startMs:null, qStartMs:null, qTimes:[], totalSec:0,
+};
+
+/* ── UTILITÁRIOS ── */
+const $  = id => document.getElementById(id);
+const shuffle = arr => [...arr].sort(() => Math.random() - .5);
+const fmt = sec => `${Math.floor(sec/60)}:${String(sec % 60).padStart(2,'0')}`;
+const initials = name => name.trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+const first2   = name => name.trim().split(/\s+/).slice(0,2).join(' ');
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('visible');
+    s.style.display = 'none';
+  });
+  const el = $(id);
+  el.style.display = 'block';
+  requestAnimationFrame(() => el.classList.add('visible'));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showToast(msg, ms=3500) {
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('up');
+  clearTimeout(t._tid);
+  t._tid = setTimeout(() => t.classList.remove('up'), ms);
+}
+
+/* ── TIMER ── */
+let timerTick = null;
+function startTimer() {
+  S.startMs = Date.now();
+  clearInterval(timerTick);
+  timerTick = setInterval(() => {
+    const s = Math.floor((Date.now() - S.startMs) / 1000);
+    $('progressTimer').textContent = `⏱ ${fmt(s)}`;
+  }, 500);
+}
+function stopTimer() {
+  clearInterval(timerTick);
+  S.totalSec = Math.floor((Date.now() - S.startMs) / 1000);
+}
+
+/* ── CONFETTI ── */
+function launchConfetti(duration=3500) {
+  const canvas = $('confettiCanvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  canvas.classList.add('active');
+  const colors = ['#1E3A5F','#1B7DC4','#7EC8E3','#f59e0b','#22c55e','#fff','#cc0000'];
+  const pieces = Array.from({length:130}, () => ({
+    x: Math.random() * canvas.width,
+    y: -10 - Math.random() * 200,
+    r: 4 + Math.random() * 7,
+    c: colors[Math.floor(Math.random()*colors.length)],
+    vx: (Math.random()-.5) * 4,
+    vy: 2.5 + Math.random() * 3.5,
+    rot: Math.random() * 360,
+    vr: (Math.random()-.5) * 7,
+    shape: Math.random() > .5 ? 'rect' : 'circle',
+  }));
+  const end = Date.now() + duration;
+  (function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.c;
+      if (p.shape === 'rect') ctx.fillRect(-p.r/2, -p.r/3, p.r, p.r*.6);
+      else { ctx.beginPath(); ctx.arc(0, 0, p.r/2, 0, Math.PI*2); ctx.fill(); }
+      ctx.restore();
+      p.x += p.vx; p.y += p.vy; p.rot += p.vr;
+      if (p.y > canvas.height) { p.y = -10; p.x = Math.random() * canvas.width; }
+    });
+    if (Date.now() < end) requestAnimationFrame(draw);
+    else { canvas.classList.remove('active'); ctx.clearRect(0,0,canvas.width,canvas.height); }
+  })();
+}
+
+/* ════════════════════════════════
+   FLUXO DO QUIZ
+════════════════════════════════ */
+
+/* Tela 1 → 2: confirmação do nome */
+function confirmName() {
+  const v = $('nameInput').value.trim();
+  if (v.split(/\s+/).filter(Boolean).length < 2 || v.length < 4) {
+    $('nameError').classList.add('visible');
+    $('nameInput').focus();
+    return;
+  }
+  $('nameError').classList.remove('visible');
+  S.name = v;
+  $('nameBadge').textContent = `Olá, ${v.split(/\s+/)[0]}! 👋`;
+  showScreen('screenIntro');
+}
+
+/* Tela 2 → 3: início do quiz */
+function startQuiz() {
+  S.shuffled  = shuffle(QUESTIONS);
+  S.answers   = Array(S.shuffled.length).fill(null);
+  S.current   = S.correct = S.wrong = S.streak = S.maxStreak = 0;
+  S.opStats   = {};
+  S.qTimes    = [];
+  S.shuffled.forEach(q => {
+    if (!S.opStats[q.op]) S.opStats[q.op] = { c:0, t:0 };
+    S.opStats[q.op].t++;
+  });
+  showScreen('screenQuiz');
+  startTimer();
+  renderQ();
+}
+
+/* Renderiza a pergunta atual */
+function renderQ() {
+  S.answered  = false;
+  S.qStartMs  = Date.now();
+  const q     = S.shuffled[S.current];
+  const total = S.shuffled.length;
+
+  $('qHeader').className = `q-header hdr-${q.op}`;
+  $('qBadge').textContent = q.opLabel;
+  $('qNum').textContent   = `Pergunta ${S.current+1} de ${total}`;
+  $('qText').textContent  = q.q;
+  $('progressFill').style.width = `${(S.current / total) * 100}%`;
+  $('progressLabel').textContent = `${S.current+1} / ${total}`;
+
+  /* Reinicia animação do card */
+  const card = $('qCard');
+  card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
+
+  /* Cria botões de opção */
+  const list = $('optionsList'); list.innerHTML = '';
+  ['A','B','C','D'].forEach((letter, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt';
+    btn.innerHTML = `<span class="opt-letter">${letter}</span><span>${q.opts[i]}</span>`;
+    btn.onclick = () => answer(i);
+    list.appendChild(btn);
+  });
+
+  $('feedback').className = 'feedback';
+  $('btnNext').className  = 'btn-next';
+  $('cCorrect').textContent = S.correct;
+  $('cWrong').textContent   = S.wrong;
+  $('cStreak').textContent  = S.streak;
+}
+
+/* Processa resposta selecionada */
+function answer(idx) {
+  if (S.answered) return;
+  S.answered = true;
+  S.qTimes.push(Math.floor((Date.now() - S.qStartMs) / 1000));
+  const q  = S.shuffled[S.current];
+  const ok = idx === q.correct;
+  S.answers[S.current] = idx;
+
+  document.querySelectorAll('.opt').forEach((b, i) => {
+    b.disabled = true;
+    if (i === q.correct)       b.classList.add('opt-correct');
+    else if (i === idx && !ok) b.classList.add('opt-wrong');
+    else                       b.classList.add('opt-dim');
+  });
+
+  if (ok) { S.correct++; S.streak++; S.maxStreak = Math.max(S.maxStreak, S.streak); S.opStats[q.op].c++; }
+  else    { S.wrong++;   S.streak = 0; }
+
+  const fb = $('feedback');
+  fb.className = `feedback visible ${ok ? 'fb-ok' : 'fb-err'}`;
+  $('fbIcon').textContent = ok ? '✅' : '❌';
+  $('fbBody').innerHTML = `<strong>${ok ? 'Correto!' : 'Não foi dessa vez…'}</strong>${q.explain}`;
+
+  const nb = $('btnNext');
+  nb.className = 'btn-next visible';
+  nb.textContent = S.current < S.shuffled.length - 1 ? 'Próxima pergunta →' : 'Ver resultado →';
+
+  $('cCorrect').textContent = S.correct;
+  $('cWrong').textContent   = S.wrong;
+  $('cStreak').textContent  = S.streak;
+}
+
+/* Avança para próxima pergunta ou finaliza */
+function nextQ() {
+  S.current++;
+  if (S.current >= S.shuffled.length) finish();
+  else { renderQ(); window.scrollTo({top:0, behavior:'smooth'}); }
+}
+
+/* ════════════════════════════════
+   FINALIZAÇÃO & RESULTADO
+════════════════════════════════ */
+function finish() {
+  stopTimer();
+  const total  = S.shuffled.length;
+  const pct    = Math.round((S.correct / total) * 100);
+  const passed = pct >= PASS_PCT;
+
+  /* Preenche os campos do resultado */
+  $('scorePct').textContent   = `${pct}%`;
+  $('scoreLabel').textContent = `${S.correct} de ${total} corretas`;
+  $('resCorrect').textContent = S.correct;
+  $('resWrong').textContent   = S.wrong;
+  $('resTime').textContent    = fmt(S.totalSec);
+
+  $('statusWrap').innerHTML = passed
+    ? `<div class="status-badge sb-ok">✅ Aprovado(a) — ${pct}% ≥ 70%</div>`
+    : `<div class="status-badge sb-err">❌ Reprovado(a) — ${pct}% < 70%</div>`;
+
+  /* Mensagens dinâmicas por faixa de nota */
+  let emoji, title, sub, msg;
+  if (pct === 100) {
+    emoji='🏆'; title='Perfeito! 100%!'; sub='Você dominou todas as operadoras!';
+    msg='🌟 Nota máxima! Você está completamente pronto(a) para consultorias de alto nível.';
+  } else if (pct >= 80) {
+    emoji='🎯'; title='Excelente resultado!'; sub='Ótimo domínio das operadoras do DF.';
+    msg='💪 Muito bem! Passou com folga. Revise os erros para atingir a perfeição.';
+  } else if (pct >= 70) {
+    emoji='👍'; title='Aprovado(a)!'; sub='Você atingiu a nota mínima de aprovação.';
+    msg='✅ Parabéns pela aprovação! Revise os erros para um desempenho ainda melhor.';
+  } else if (pct >= 50) {
+    emoji='📚'; title='Quase lá!'; sub='Faltou pouco para a aprovação.';
+    msg='🔄 Você está perto! Revise as operadoras onde errou e tente novamente.';
+  } else {
+    emoji='💡'; title='Hora de revisar!'; sub='O conteúdo precisa de mais atenção.';
+    msg='📋 Recomendamos rever o Módulo 02 completo. Pratique uma operadora de cada vez.';
+  }
+  $('resEmoji').textContent = emoji;
+  $('resTitle').textContent = title;
+  $('resSub').textContent   = sub;
+  $('resMsg').textContent   = msg;
+
+  /* Breakdown por operadora (barras animadas após mount) */
+  $('opBreakdown').innerHTML = Object.entries(S.opStats).map(([op, st]) => {
+    const p   = st.t > 0 ? Math.round((st.c / st.t) * 100) : 0;
+    const col = OP_COLORS[op] || '#1B7DC4';
+    return `<div class="op-row">
+      <div class="op-dot" style="background:${col}"></div>
+      <div class="op-name">${OP_NAMES[op] || op}</div>
+      <div class="op-track"><div class="op-fill" data-w="${p}" style="width:0%;background:${col}"></div></div>
+      <div class="op-pct" style="color:${col}">${p}%</div>
+    </div>`;
+  }).join('');
+
+  /* Gabarito completo */
+  $('reviewList').innerHTML = S.shuffled.map((q,i) => {
+    const ua = S.answers[i], ok = ua === q.correct;
+    return `<div class="review-item ${ok?'ri-ok':'ri-err'}">
+      <div class="review-q">${i+1}. ${q.q}</div>
+      <div class="review-a"><span class="rtag rtag-ok">CERTA</span> ${q.opts[q.correct]}</div>
+      ${!ok && ua !== null ? `<div class="review-a"><span class="rtag rtag-err">SUA</span> ${q.opts[ua]}</div>` : ''}
+    </div>`;
+  }).join('');
+
+  showScreen('screenResult');
+
+  /* Anima barras de operadora após DOM atualizar */
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    document.querySelectorAll('.op-fill').forEach(el => {
+      el.style.width = el.dataset.w + '%';
+    });
+  }));
+
+  /* Confetti para aprovados */
+  if (passed) setTimeout(() => launchConfetti(3800), 400);
+
+  /* Persiste resultado */
+  saveResult(pct, total, passed);
+}
+
+/* ════════════════════════════════
+   PERSISTÊNCIA DE DADOS
+════════════════════════════════ */
+async function saveResult(pct, total, passed) {
+  const result = {
+    name:      S.name,
+    score:     S.correct,
+    total,
+    percentage: pct,
+    time:      S.totalSec,
+    maxStreak: S.maxStreak,
+    passed,
+    date:      new Date().toISOString(),
+    opStats:   S.opStats,
+  };
+
+  /* Salva sempre em localStorage (backup local) */
+  const local = JSON.parse(localStorage.getItem('amv_quiz_results') || '[]');
+  local.push({ ...result, _id: Date.now().toString() });
+  localStorage.setItem('amv_quiz_results', JSON.stringify(local));
+
+  /* Envia para Google Sheets se configurado */
+  if (SHEETS_ENABLED) {
+    try {
+      fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode:   'no-cors',           // Apps Script redireciona; no-cors é necessário
+        body:   JSON.stringify(result),
+      });
+      showToast('✅ Resultado salvo no ranking!');
+    } catch(e) {
+      console.warn('Sheets save error:', e);
+      showToast('💾 Resultado salvo localmente.');
+    }
+  } else {
+    showToast('💾 Resultado salvo localmente.');
+  }
+}
+
+/* ════════════════════════════════
+   RANKING
+════════════════════════════════ */
+async function goRanking() {
+  showScreen('screenRanking');
+  $('myResultWrap').innerHTML  = '';
+  $('podiumWrap').innerHTML    = '<div class="spin-wrap"><div class="spinner"></div><div class="spin-label">Carregando ranking…</div></div>';
+  $('rankTableWrap').innerHTML = '';
+
+  let results = [];
+
+  /* Tenta Google Sheets primeiro */
+  if (SHEETS_ENABLED) {
+    try {
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      if (Array.isArray(data) && data.length) results = data;
+    } catch(e) {
+      console.warn('Sheets read error, usando localStorage:', e);
+    }
+  }
+
+  /* Fallback para localStorage */
+  if (!results.length) {
+    results = JSON.parse(localStorage.getItem('amv_quiz_results') || '[]');
+  }
+
+  /* Ordenação: % desc → tempo asc (menor tempo desempata) */
+  results.sort((a, b) =>
+    b.percentage !== a.percentage ? b.percentage - a.percentage : a.time - b.time
+  );
+
+  /* Encontra posição do participante atual (última ocorrência do nome) */
+  const myIdx = results.reduce((best, r, i) => r.name === S.name ? i : best, -1);
+
+  if (myIdx >= 0) renderMyResult(results[myIdx], myIdx + 1);
+  renderPodium(results);
+  renderRankTable(results, myIdx);
+}
+
+function renderMyResult(r, pos) {
+  const medals = {1:'🥇', 2:'🥈', 3:'🥉'};
+  const medal  = medals[pos] || `#${pos}`;
+  $('myResultWrap').innerHTML = `
+    <div class="my-result">
+      <div class="my-label">Seu resultado nesta sessão</div>
+      <div class="my-name">${medal} ${r.name}</div>
+      <div class="my-stats">
+        <div class="my-s"><div class="my-s-val blue-val">${r.percentage}%</div><div class="my-s-lbl">Desempenho</div></div>
+        <div class="my-s"><div class="my-s-val">${r.score}/${r.total}</div><div class="my-s-lbl">Acertos</div></div>
+        <div class="my-s"><div class="my-s-val">${fmt(r.time)}</div><div class="my-s-lbl">Tempo</div></div>
+        <div class="my-s"><div class="my-s-val">${pos}º</div><div class="my-s-lbl">Posição</div></div>
+      </div>
+    </div>`;
+}
+
+function renderPodium(results) {
+  if (!results.length) {
+    $('podiumWrap').innerHTML = '<div class="empty-state"><span class="empty-icon">📋</span>Nenhum resultado registrado ainda.<br>Seja o primeiro a completar o quiz!</div>';
+    return;
+  }
+  const top3   = results.slice(0, 3);
+  const medals = ['🥇','🥈','🥉'];
+  /* Ordem visual do pódio: 2º (esq), 1º (centro), 3º (dir) */
+  const order  = [1, 0, 2].filter(i => top3[i]);
+
+  let html = '<div class="podium">';
+  order.forEach(i => {
+    const r = top3[i];
+    html += `
+      <div class="podium-slot">
+        <div class="podium-info">
+          <div class="podium-medal">${medals[i]}</div>
+          <div class="pod-av av-${i+1}">${initials(r.name)}</div>
+          <div class="pod-name">${first2(r.name)}</div>
+          <div class="pod-score ps-${i+1}">${r.percentage}%</div>
+          <div class="pod-time">⏱ ${fmt(r.time)}</div>
+        </div>
+        <div class="pod-block pb-${i+1}">${i+1}º</div>
+      </div>`;
+  });
+  html += '</div>';
+  $('podiumWrap').innerHTML = html;
+}
+
+function renderRankTable(results, myIdx) {
+  if (!results.length) { $('rankTableWrap').innerHTML = ''; return; }
+  const medals = {0:'🥇', 1:'🥈', 2:'🥉'};
+  let html = `
+    <div class="rank-table">
+      <div class="rank-thead">
+        <div class="rth">#</div>
+        <div class="rth">Nome</div>
+        <div class="rth">Acertos</div>
+        <div class="rth">Nota</div>
+        <div class="rth">Tempo</div>
+      </div>`;
+  results.forEach((r, i) => {
+    const rowCls    = i===0?'rr-1':i===1?'rr-2':i===2?'rr-3':'';
+    const meCls     = i === myIdx ? ' rr-me' : '';
+    const scoreCls  = r.percentage >= 80 ? 'rs-g' : r.percentage >= 70 ? 'rs-y' : 'rs-r';
+    const posLabel  = medals[i] !== undefined ? medals[i] : (i+1);
+    html += `
+      <div class="rank-row ${rowCls}${meCls}">
+        <div class="r-pos ${i<3?'medal':''}">${posLabel}</div>
+        <div class="r-name">${r.name}${i===myIdx?'<span class="me-tag">(você)</span>':''}</div>
+        <div class="r-score ${scoreCls}">${r.score}/${r.total}</div>
+        <div class="r-pct">${r.percentage}%</div>
+        <div class="r-time">${fmt(r.time)}</div>
+      </div>`;
+  });
+  html += '</div>';
+  $('rankTableWrap').innerHTML = html;
+}
+
+/* ════════════════════════════════
+   CONTROLES SECUNDÁRIOS
+════════════════════════════════ */
+function toggleReview() {
+  const rw = $('reviewWrap');
+  rw.classList.toggle('open');
+  if (rw.classList.contains('open')) rw.scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function retryQuiz() {
+  $('reviewWrap').classList.remove('open');
+  showScreen('screenIntro');
+}
+
+function goHome() {
+  $('nameInput').value = '';
+  S.name = '';
+  showScreen('screenName');
+}
+
+/* ── Init: esconde todas as telas exceto screenName ── */
+document.querySelectorAll('.screen').forEach(s => { s.classList.remove('visible'); s.style.display='none'; });
+$('screenName').style.display = 'block';
+$('screenName').classList.add('visible');
+</script>
+</body>
+</html>
