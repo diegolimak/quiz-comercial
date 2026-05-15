@@ -942,7 +942,16 @@ function confirmName() {
 
 /* Tela 2 → 3: início do quiz */
 function startQuiz() {
-  S.shuffled  = shuffle(QUESTIONS);
+  /* Embaralha perguntas E opções de cada pergunta — garante que
+     a resposta certa muda de posição a cada nova tentativa        */
+  S.shuffled = shuffle(QUESTIONS).map(q => {
+    const order = shuffle([0, 1, 2, 3]);
+    return {
+      ...q,
+      opts:    order.map(i => q.opts[i]),
+      correct: order.indexOf(q.correct),
+    };
+  });
   S.answers   = Array(S.shuffled.length).fill(null);
   S.current   = S.correct = S.wrong = S.streak = S.maxStreak = 0;
   S.opStats   = {};
