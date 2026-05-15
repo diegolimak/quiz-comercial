@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quiz de Treinamento PME | Corretora Amor à Vida</title>
-  <meta name="description" content="Quiz interativo de treinamento interno — Módulo 02 Análise de Mercado PME · Operadoras do DF">
+  <meta name="description" content="Quiz interativo de treinamento interno — Regras Comerciais PME: Amil, Bradesco e SulAmérica">
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -530,7 +530,7 @@
       <span class="brand-label">Corretora Amor à Vida</span>
     </div>
     <h1 class="app-title">Quiz de <em>Treinamento</em></h1>
-    <p class="app-sub">Módulo 02 — Análise de Mercado PME · Operadoras do DF</p>
+    <p class="app-sub">Regras Comerciais PME · Amil, Bradesco e SulAmérica</p>
   </div>
 
   <!-- ══ TELA 1: NOME ══ -->
@@ -561,7 +561,7 @@
         <span class="screen-icon" style="font-size:56px">🏥</span>
         <div class="name-badge" id="nameBadge">Olá! 👋</div>
         <h2 class="screen-title" style="font-size:27px">Pronto(a) para o desafio?</h2>
-        <p class="screen-sub" style="margin-bottom:18px">21 perguntas sobre regras, carências e diferenciais das operadoras de saúde suplementar do DF.</p>
+        <p class="screen-sub" style="margin-bottom:18px">20 perguntas sobre regras de aceitação, carências e diferenciais da Amil, Bradesco e SulAmérica.</p>
         <div class="pass-alert">
           <span style="font-size:20px">🎯</span>
           <span>Nota mínima para aprovação: <strong>70%</strong> — aprovados recebem certificado!</span>
@@ -576,8 +576,8 @@
           <span class="op-chip" style="background:#1a7a4a">🌿 MedSênior</span>
         </div>
         <div class="intro-stats">
-          <div class="intro-stat"><div class="intro-stat-n">21</div><div class="intro-stat-l">Perguntas</div></div>
-          <div class="intro-stat"><div class="intro-stat-n">7</div><div class="intro-stat-l">Operadoras</div></div>
+          <div class="intro-stat"><div class="intro-stat-n">20</div><div class="intro-stat-l">Perguntas</div></div>
+          <div class="intro-stat"><div class="intro-stat-n">3</div><div class="intro-stat-l">Operadoras</div></div>
           <div class="intro-stat"><div class="intro-stat-n">~10</div><div class="intro-stat-l">Minutos</div></div>
         </div>
         <button class="btn-primary" onclick="startQuiz()">Começar Quiz →</button>
@@ -705,134 +705,121 @@ const SCRIPT_URL    = "https://script.google.com/macros/s/AKfycbyvcdGHis1cCUvTAY
 const SHEETS_ENABLED = SCRIPT_URL !== "COLE_AQUI_A_URL_DO_APPS_SCRIPT";
 
 /* ───────────────────────────────────────────────────────────────────
-   BANCO DE QUESTÕES — Módulo 02 PME
+   BANCO DE QUESTÕES — Regras Comerciais PME (Amil, Bradesco, SulAmérica)
    Para adicionar novas perguntas: inclua um objeto no array QUESTIONS
    seguindo o mesmo formato { op, opLabel, q, opts[], correct, explain }
 ─────────────────────────────────────────────────────────────────── */
 const OP_COLORS = {
   bradesco:'#cc0000', amil:'#0057a8', sula:'#f47920',
-  unimed:'#009847',   porto:'#003399', quallity:'#7b2d8b',
-  medsenior:'#1a7a4a', geral:'#1B7DC4'
 };
 const OP_NAMES = {
-  bradesco:'Bradesco', amil:'Amil', sula:'SulAmérica',
-  unimed:'Seg. Unimed', porto:'Porto Seguro', quallity:'Quallity',
-  medsenior:'MedSênior', geral:'Geral'
+  bradesco:'Bradesco Saúde', amil:'Amil', sula:'SulAmérica',
 };
 
 const QUESTIONS = [
   /* ── BRADESCO ── */
   {op:'bradesco', opLabel:'💙 Bradesco Saúde',
-   q:'A Bradesco Saúde aceita plano empresarial a partir de quantas vidas?',
-   opts:['1 vida','2 vidas','3 vidas','5 vidas'], correct:2,
-   explain:'O plano empresarial da Bradesco aceita a partir de 3 vidas. Amil e Seguros Unimed aceitam a partir de 2 vidas — diferença importante para empresas pequenas.'},
+   q:'Na Bradesco Saúde, qual o prazo para a inclusão de dependentes (casamento, nascimento ou adoção) sem perda de prazos de carência?',
+   opts:['15 dias','30 dias','60 dias','90 dias'], correct:1,
+   explain:'Na Bradesco, o prazo é de 30 dias após o evento (casamento, nascimento ou adoção). Após esse prazo, o dependente entra com carências completas.'},
 
   {op:'bradesco', opLabel:'💙 Bradesco Saúde',
-   q:'Qual é a variação de preço entre as tabelas com e sem coparticipação na Bradesco?',
-   opts:['10%','20%','30%','33%'], correct:1,
-   explain:'A Bradesco tem apenas 20% de variação — a menor entre as operadoras. Amil chega a 30% e SulAmérica a 33,33%.'},
+   q:'No produto Bradesco Saúde, qual a principal diferença entre as modalidades de Reembolso Específico e Reembolso Completo?',
+   opts:['O Específico só atende internações','O Específico cobre apenas consultas e honorários médicos de paciente internado','O Completo não exige pagamento antecipado','Não há diferença técnica entre elas'], correct:1,
+   explain:'O Reembolso Específico cobre exclusivamente consultas e honorários médicos de paciente internado. O Reembolso Completo tem cobertura mais ampla para procedimentos fora da rede credenciada.'},
 
   {op:'bradesco', opLabel:'💙 Bradesco Saúde',
-   q:'Em caso de falecimento do titular, por quanto tempo a Bradesco oferece remissão gratuita ao dependente?',
-   opts:['6 meses','12 meses','18 meses','24 meses'], correct:1,
-   explain:'A Bradesco oferece 12 meses de remissão gratuita para cônjuge ou filho solteiro até 18 anos, em apólices ativas há mais de 12 meses.'},
+   q:'Qual o fator de coparticipação padrão aplicado nos procedimentos da Bradesco Saúde, quando contratada essa modalidade?',
+   opts:['10%','20%','30%','50%'], correct:2,
+   explain:'A Bradesco aplica 30% de coparticipação padrão nos procedimentos. Importante destacar esse impacto ao cliente na comparação de tabelas com e sem coparticipação.'},
+
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Qual a idade máxima de aceitação para dependentes (filhos solteiros) no plano Bradesco?',
+   opts:['Até 24 anos','Até 39 anos, 11 meses e 29 dias','Até 44 anos','Sem limite de idade'], correct:1,
+   explain:'Na Bradesco, filhos solteiros são aceitos como dependentes até 39 anos, 11 meses e 29 dias — prazo bem mais generoso que operadoras que limitam a 24 anos.'},
+
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Para redução de carência na Bradesco Saúde, qual o tempo mínimo de permanência no plano anterior?',
+   opts:['3 meses','6 meses','12 meses','24 meses'], correct:1,
+   explain:'Para aproveitar carências já cumpridas em outra operadora, a Bradesco exige mínimo de 6 meses de permanência no plano anterior, com no máximo 30 dias de intervalo entre os planos.'},
 
   /* ── AMIL ── */
   {op:'amil', opLabel:'🔵 Amil',
-   q:'Qual é o diferencial da Amil em relação à carência de consultas e exames simples?',
-   opts:['Zero carência','1 dia de carência','7 dias de carência','15 dias de carência'], correct:1,
-   explain:'A Amil tem carência de apenas 1 dia para consultas e exames simples — frente aos 15 dias da Bradesco, SulAmérica e Porto Seguro.'},
+   q:'O que é necessário para aproveitar carências de uma operadora anterior na Amil através do PRC 617?',
+   opts:['Ter pelo menos 12 meses de plano na operadora anterior','Ter pelo menos 6 meses de permanência em uma operadora congênere','Ter no máximo 30 anos de idade','Não ter nenhuma doença preexistente'], correct:1,
+   explain:'O PRC 617 da Amil permite aproveitar carências de operadora anterior desde que o beneficiário tenha pelo menos 6 meses de permanência em uma operadora congênere regulamentada pela ANS.'},
 
   {op:'amil', opLabel:'🔵 Amil',
-   q:'Qual é o limite máximo de idade para inclusão de vidas na Amil?',
-   opts:['59 anos','65 anos','69 anos, 11 meses e 30 dias','75 anos'], correct:2,
-   explain:'A Amil só aceita vidas até 69 anos, 11 meses e 30 dias. Para mais velhos, o MedSênior é a alternativa.'},
+   q:'No plano Amil S6500 Black, qual o diferencial de transplantes oferecido?',
+   opts:['Não cobre transplantes','Cobre transplantes de Coração, Pulmão, Pâncreas e Pâncreas-Rim','Cobre apenas transplante de medula','Cobre transplantes apenas para o titular'], correct:1,
+   explain:'O Amil S6500 Black oferece cobertura ampliada para transplantes de Coração, Pulmão, Pâncreas e Pâncreas-Rim — diferencial importante nos planos premium da Amil.'},
 
   {op:'amil', opLabel:'🔵 Amil',
-   q:'O aditivo de cobertura internacional da Amil cobre urgência e emergência com limite de até:',
-   opts:['USD 100.000','USD 200.000','USD 300.000','USD 500.000'], correct:2,
-   explain:'O aditivo internacional da Amil cobre até USD 300.000. Deve ser contratado somente na implantação. Nos produtos One, já vem gratuito.'},
+   q:'Qual o critério da Amil para a Declaração de Saúde em contratos de 30 a 99 vidas (Porte II)?',
+   opts:['Cada vida deve preencher individualmente','A empresa deve preencher a Declaração de Informação de Saúde','Somente maiores de 60 anos preenchem','Ninguém preenche, a aceitação é automática'], correct:1,
+   explain:'No Porte II (30 a 99 vidas), a Amil exige que a empresa preencha a Declaração de Informação de Saúde em vez de cada beneficiário individualmente — processo mais ágil na implantação.'},
+
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'Na Amil, qual a regra para aceitação de dependentes indiretos (agregados)?',
+   opts:['Podem entrar a qualquer momento','São aceitos exclusivamente na implantação','Somente filhos podem ser agregados','Exigem carência de 2 anos'], correct:1,
+   explain:'Na Amil, dependentes indiretos (pai, mãe, sogros, etc.) são aceitos exclusivamente na implantação do contrato. Não é possível incluí-los em momento posterior.'},
+
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'Sobre a isenção de carências na Amil para grupos a partir de 30 vidas (Porte II), qual a alternativa correta?',
+   opts:['Não há isenção para esse porte','Isenção de carência para TUDO (incluindo Parto)','Isenção de carência para tudo, exceto CPT','Isento apenas para consultas e exames básicos'], correct:1,
+   explain:'Grupos com 30 ou mais vidas (Porte II) na Amil têm isenção total de carências, inclusive Parto a Termo — vantagem competitiva decisiva para empresas com esse porte.'},
 
   /* ── SULAMERICA ── */
   {op:'sula', opLabel:'🟠 SulAmérica',
-   q:'A remissão da SulAmérica cobre por quanto tempo e de que forma é contratada?',
-   opts:['12 meses, automática','12 meses, deve ser solicitada','24 meses, automática','24 meses, deve ser solicitada'], correct:3,
-   explain:'SulAmérica oferece 24 meses de remissão, porém NÃO é automática — precisa ser solicitada na contratação. Se não for pedida, não é concedida.'},
+   q:'Sobre a SulAmérica Saúde PME, qual o limite de idade para a inclusão de netos como dependentes diretos no contrato?',
+   opts:['Até 17 anos, 11 meses e 29 dias','Até 24 anos, se universitários','Até 39 anos','Sem limite de idade'], correct:0,
+   explain:'Na SulAmérica PME, netos são aceitos como dependentes diretos somente até 17 anos, 11 meses e 29 dias — diferente de filhos solteiros, que têm prazo estendido.'},
 
   {op:'sula', opLabel:'🟠 SulAmérica',
-   q:'Na SulAmérica, o aproveitamento de carência é cancelado se o cliente ficou fora do plano por mais de:',
-   opts:['30 dias','45 dias','60 dias','90 dias'], correct:2,
-   explain:'Na SulAmérica, cancelado a 60 dias. Na Bradesco, apenas 30 dias.'},
+   q:'Na SulAmérica, quando é permitido utilizar a "Regra Flex" (que não exige 100% de adesão da empresa)?',
+   opts:['Sempre que a empresa tiver mais de 50 vidas','Quando houver a contratação conjunta de Saúde + Odonto','Apenas para empresas de tecnologia','Somente para planos de abrangência regional'], correct:1,
+   explain:'A Regra Flex da SulAmérica dispensa a adesão de 100% das vidas, mas somente quando há contratação conjunta de Saúde + Odonto. Sem odonto, a regra padrão de adesão se aplica.'},
 
   {op:'sula', opLabel:'🟠 SulAmérica',
-   q:'A SulAmérica NÃO faz aproveitamento de carências para beneficiários a partir de qual idade?',
-   opts:['59 anos','63 anos','65 anos','70 anos'], correct:2,
-   explain:'A SulAmérica não aproveita carências para 65 anos ou mais. Mesmo com plano anterior há décadas, entrarão com carências completas.'},
+   q:'Qual o prazo de aviso prévio de cancelamento para a SulAmérica e para a Amil?',
+   opts:['30 dias','60 dias','15 dias','Não existe aviso prévio'], correct:1,
+   explain:'Tanto a SulAmérica quanto a Amil exigem 60 dias de aviso prévio para cancelamento do contrato. Detalhe essencial a comunicar ao cliente no momento da rescisão.'},
 
-  /* ── SEGUROS UNIMED ── */
-  {op:'unimed', opLabel:'🟢 Seguros Unimed',
-   q:'Qual é o grande diferencial dos planos com coparticipação da Seguros Unimed?',
-   opts:['É a coparticipação mais barata do mercado','Possui limitador mensal de R$300 (regional) e R$350 (nacional Compact)','Não cobra coparticipação em internações','A coparticipação é cobrada só uma vez por mês'], correct:1,
-   explain:'A Seguros Unimed tem teto: no máximo R$300/mês no regional e R$350/mês no nacional Compact — independente do uso. Diferencial único no mercado.'},
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'No SulAmérica Cuidado 360º, quais benefícios são subsidiados integralmente na vigência inicial?',
+   opts:['Apenas Seguro Viagem','Odonto e Vida','Somente Auxílio Creche','Nenhum benefício é subsidiado'], correct:1,
+   explain:'No SulAmérica Cuidado 360º, Odonto e Vida são subsidiados integralmente durante a vigência inicial, reduzindo o custo percebido pelo cliente na contratação.'},
 
-  {op:'unimed', opLabel:'🟢 Seguros Unimed',
-   q:'Para contratos de 2 a 29 vidas, a Seguros Unimed exige qual procedimento que outras operadoras não exigem?',
-   opts:['Exame médico presencial','Aprovação de 100% dos sócios','Perícia de vídeo para todos os titulares','Certidão negativa de débitos do CNPJ'], correct:2,
-   explain:'Das grandes seguradoras, a Seguros Unimed é a única que exige perícia de vídeo para todos os titulares em contratos de 2–29 vidas.'},
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'Na SulAmérica, o que acontece se um recém-nascido for incluído no plano?',
+   opts:['Cumpre 300 dias de carência','Seguirá a carência do Titular, sem necessidade de 12 meses no plano anterior','Só pode entrar se o titular for sócio','Paga dobro da mensalidade'], correct:1,
+   explain:'Recém-nascidos incluídos na SulAmérica herdam a carência do titular, sem necessidade de comprovação de 12 meses em plano anterior — facilita a inclusão imediata.'},
 
-  {op:'unimed', opLabel:'🟢 Seguros Unimed',
-   q:'Em quais regiões a Seguros Unimed permite comercialização direta, sem pleito?',
-   opts:['Todo o Brasil','DF, GO e MG','DF, SP capital e Salvador','DF e toda a região metropolitana de SP'], correct:2,
-   explain:'A Seguros Unimed comercializa diretamente para CNPJs do DF, SP capital e Salvador. Fora disso, é necessário pleito.'},
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'Qual a idade limite máxima para redução de carência na SulAmérica Saúde?',
+   opts:['59 anos','Até 64 anos, 11 meses e 29 dias','69 anos','75 anos'], correct:1,
+   explain:'A SulAmérica permite redução de carência apenas para beneficiários de até 64 anos, 11 meses e 29 dias. Acima disso, as carências são aplicadas integralmente.'},
 
-  /* ── PORTO SEGURO ── */
-  {op:'porto', opLabel:'🔷 Porto Seguro',
-   q:'Qual é a exigência mínima de adesão da Porto Seguro para contratos empresariais?',
-   opts:['50% dos sócios ou funcionários','70% dos sócios ou funcionários','80% dos sócios ou funcionários','100% dos sócios ou funcionários'], correct:2,
-   explain:'A Porto Seguro exige entrada de pelo menos 80% dos sócios ou funcionários — mais restritivo que as demais operadoras.'},
+  /* ── GERAL (Amil + Bradesco + SulAmérica) ── */
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Quais categorias de titulares são aceitas na SulAmérica e na Bradesco?',
+   opts:['Apenas funcionários CLT','Sócios, Diretores, Administradores, Empregados CLT, Estagiários e Aprendizes','Apenas Sócios e Diretores','Somente pessoas com mais de 18 anos'], correct:1,
+   explain:'Ambas aceitam: Sócios, Diretores, Administradores, Empregados CLT, Estagiários e Aprendizes. Conhecer os vínculos aceitos é essencial para a elegibilidade na contratação PME.'},
 
-  {op:'porto', opLabel:'🔷 Porto Seguro',
-   q:'Qual é o prazo de fidelidade dos contratos empresariais da Porto Seguro (3–99 vidas)?',
-   opts:['12 meses','18 meses','24 meses','36 meses'], correct:2,
-   explain:'Contratos de 3–99 vidas na Porto Seguro: vigência e fidelidade de 24 meses com multa de 3× a média mensal.'},
+  {op:'sula', opLabel:'🟠 SulAmérica',
+   q:'Qual é a carência padrão para "Parto a Termo" em contratos PME de 3 a 29 vidas?',
+   opts:['180 dias','300 dias','240 dias','Isento'], correct:1,
+   explain:'300 dias é a carência padrão para Parto a Termo em contratos PME de 3 a 29 vidas nas principais operadoras. Equivale a aproximadamente 10 meses.'},
 
-  {op:'porto', opLabel:'🔷 Porto Seguro',
-   q:'Na Porto Seguro, os dependentes podem ter produto diferente do titular?',
-   opts:['Sim, qualquer produto','Sim, mas só para filhos','Não — dependentes devem ter o mesmo produto do titular','Somente nos produtos da Linha P'], correct:2,
-   explain:'Na Porto Seguro, o dependente sempre precisa ter o mesmo produto do titular. A regra de coparticipação também é linear para todos.'},
+  {op:'amil', opLabel:'🔵 Amil',
+   q:'Qual a principal regra para aceitação de estagiários no plano de saúde?',
+   opts:['Devem ter entre 18 e 25 anos','Não há limite de idade, desde que apresentem contrato assinado por todas as partes','Devem estar cursando pós-graduação','Só podem entrar se a empresa tiver mais de 10 vidas'], correct:1,
+   explain:'Estagiários não têm limite de idade para inclusão. A exigência é apresentar contrato de estágio assinado por todas as partes: aluno, empresa e instituição de ensino.'},
 
-  /* ── QUALLITY ── */
-  {op:'quallity', opLabel:'🟣 Quallity',
-   q:'Qual é o principal diferencial da Quallity que nenhuma outra operadora PME do DF oferece?',
-   opts:['Cobertura internacional gratuita','Planos ambulatoriais para empresas','Remissão automática','Rede credenciada nacional'], correct:1,
-   explain:'A Quallity é a única operadora PME do DF que comercializa planos ambulatoriais — ideal para empresas que querem benefício acessível para classes C, D e E.'},
-
-  {op:'quallity', opLabel:'🟣 Quallity',
-   q:'Para beneficiários acima de 59 anos, a Quallity exige:',
-   opts:['Exame médico laboratorial','Perícia presencial ou por vídeo','Autorização especial da ANS','Carta de saúde assinada por médico'], correct:1,
-   explain:'A Quallity exige perícia presencial ou por vídeo para vidas acima de 59 anos — obstáculo operacional relevante para empresas com quadro mais envelhecido.'},
-
-  /* ── MEDSENIOR ── */
-  {op:'medsenior', opLabel:'🌿 MedSênior',
-   q:'A partir de qual idade o MedSênior aceita titulares?',
-   opts:['40 anos','44 anos','50 anos','59 anos'], correct:1,
-   explain:'O MedSênior aceita qualquer pessoa a partir de 44 anos. É produto exclusivo para melhor idade, sem tabela para jovens e sem dependentes.'},
-
-  {op:'medsenior', opLabel:'🌿 MedSênior',
-   q:'Qual é o grande diferencial contratual do MedSênior em relação ao cancelamento?',
-   opts:['O cliente pode cancelar sem multa a qualquer momento','A operadora pode cancelar com 30 dias de aviso','Contrato unilateral — só o cliente cancela (operadora cancela apenas por fraude ou inadimplência +60 dias)','Não há fidelidade mínima'], correct:2,
-   explain:'O MedSênior tem contrato unilateral: apenas o cliente pode rescindir. A operadora só cancela por fraude ou inadimplência acima de 60 dias.'},
-
-  /* ── MERCADO GERAL ── */
-  {op:'geral', opLabel:'🎯 Mercado Geral',
-   q:'Quais duas operadoras têm a MAIOR flexibilidade na aceitação de dependentes agregados?',
-   opts:['Bradesco e SulAmérica','Amil e Porto Seguro','Quallity e Seguros Unimed','SulAmérica e Porto Seguro'], correct:1,
-   explain:'Amil e Porto Seguro são as mais flexíveis para dependentes indiretos (pai, mãe, netos, irmãos, sogros, genros, noras). Ideais para incluir família ampliada.'},
-
-  {op:'geral', opLabel:'🎯 Mercado Geral',
-   q:'Qual operadora NÃO aceita CNPJ MEI?',
-   opts:['Bradesco','Porto Seguro','Seguros Unimed','SulAmérica'], correct:2,
-   explain:'A Seguros Unimed não comercializa para CNPJ MEI. A Bradesco aceita MEI, mas sem aproveitamento de carências.'},
+  {op:'bradesco', opLabel:'💙 Bradesco Saúde',
+   q:'Qual o período de suspensão de cobertura (CPT) para doenças preexistentes declaradas?',
+   opts:['12 meses','24 meses','6 meses','48 meses'], correct:1,
+   explain:'O CPT (Cobertura Parcial Temporária) suspende a cobertura para doenças preexistentes declaradas por até 24 meses. Após esse período, a cobertura passa a ser integral.'},
 ];
 
 const PASS_PCT = 70; /* nota mínima de aprovação */
@@ -1076,7 +1063,7 @@ function finish() {
     msg='🔄 Você está perto! Revise as operadoras onde errou e tente novamente.';
   } else {
     emoji='💡'; title='Hora de revisar!'; sub='O conteúdo precisa de mais atenção.';
-    msg='📋 Recomendamos rever o Módulo 02 completo. Pratique uma operadora de cada vez.';
+    msg='📋 Recomendamos rever as regras da Amil, Bradesco e SulAmérica. Pratique uma operadora de cada vez.';
   }
   $('resEmoji').textContent = emoji;
   $('resTitle').textContent = title;
